@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertCircle,
   Eye,
@@ -12,7 +12,7 @@ import { useAuth } from "../context/AuthContext";
 
 /**
  * Login page with mock authentication.
- * Validates credentials against VITE_ADMIN_EMAIL / VITE_ADMIN_PASSWORD from .env.
+ * Enhanced with modern design, 2xl border radius, and premium spacing.
  */
 export default function Login() {
   "use no memo";
@@ -33,85 +33,85 @@ export default function Login() {
     }
 
     setIsSubmitting(true);
-
-    // Simulate network delay
     await new Promise((r) => setTimeout(r, 800));
 
     const result = login(email, password);
     if (!result.success) {
       setError(result.message);
     }
-
     setIsSubmitting(false);
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 font-inter">
       {/* Background decorations */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 -left-32 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] opacity-50" />
+        <div className="absolute bottom-0 -right-32 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] opacity-50" />
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative w-full max-w-md"
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-[440px]"
       >
         {/* Card */}
-        <div className="bg-surface rounded-2xl border border-border shadow-2xl shadow-black/10 overflow-hidden">
+        <div className="bg-surface rounded-[2.5rem] border border-border shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden">
           {/* Header */}
-          <div className="px-6 pt-8 pb-6 sm:px-8 text-center">
+          <div className="px-8 pt-12 pb-8 sm:px-12 text-center">
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-primary/25"
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 15 }}
+              className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/30"
             >
-              <GraduationCap size={32} className="text-white" />
+              <GraduationCap size={40} className="text-white" />
             </motion.div>
-            <h1 className="text-2xl font-bold text-text-primary">
+            <h1 className="text-3xl font-black text-text-primary tracking-tight">
               Welcome Back
             </h1>
-            <p className="text-sm text-text-muted mt-2">
-              Sign in to your admin dashboard
+            <p className="text-sm text-text-muted mt-3 font-medium opacity-80">
+              Sign in to manage your e-learning platform
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-6 pb-8 sm:px-8 space-y-5">
+          <form onSubmit={handleSubmit} className="px-8 pb-12 sm:px-12 space-y-6">
             {/* Error */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
-              >
-                <AlertCircle size={16} className="shrink-0" />
-                {error}
-              </motion.div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold overflow-hidden"
+                >
+                  <AlertCircle size={16} className="shrink-0" />
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Email */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-text-secondary">
+              <label className="block text-xs font-black text-text-secondary uppercase tracking-widest px-1">
                 Email Address
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <Mail
-                  size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"
+                  size={18}
+                  className="absolute left-5 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary transition-colors"
                 />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@edulearn.com"
-                  className="w-full pl-11 pr-4 py-3 rounded-xl bg-background border border-border
-                             text-text-primary placeholder:text-text-muted text-sm
-                             focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary
-                             transition-all duration-200"
+                  className="w-full pl-14 pr-5 py-4 rounded-2xl bg-background border border-border
+                             text-text-primary placeholder:text-text-muted/60 text-sm font-medium
+                             focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary
+                             transition-all duration-300"
                   autoComplete="email"
                 />
               </div>
@@ -119,32 +119,32 @@ export default function Login() {
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-text-secondary">
+              <label className="block text-xs font-black text-text-secondary uppercase tracking-widest px-1">
                 Password
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <Lock
-                  size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"
+                  size={18}
+                  className="absolute left-5 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary transition-colors"
                 />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-12 py-3 rounded-xl bg-background border border-border
-                             text-text-primary placeholder:text-text-muted text-sm
-                             focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary
-                             transition-all duration-200"
+                  className="w-full pl-14 pr-14 py-4 rounded-2xl bg-background border border-border
+                             text-text-primary placeholder:text-text-muted/60 text-sm font-medium
+                             focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary
+                             transition-all duration-300"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-text-muted
                              hover:text-text-primary transition-colors cursor-pointer"
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
@@ -153,16 +153,16 @@ export default function Login() {
             <motion.button
               type="submit"
               disabled={isSubmitting}
-              whileHover={!isSubmitting ? { scale: 1.01 } : {}}
-              whileTap={!isSubmitting ? { scale: 0.99 } : {}}
-              className="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm
-                         hover:bg-primary/90 shadow-lg shadow-primary/25
+              whileHover={!isSubmitting ? { scale: 1.02, y: -2 } : {}}
+              whileTap={!isSubmitting ? { scale: 0.98, y: 0 } : {}}
+              className="w-full py-4 rounded-2xl bg-primary text-white font-black text-sm uppercase tracking-wider
+                         hover:bg-primary/90 shadow-xl shadow-primary/20
                          disabled:opacity-60 disabled:cursor-not-allowed
                          transition-all duration-300 cursor-pointer"
             >
               {isSubmitting ? (
                 <span className="inline-flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                     <circle
                       className="opacity-25"
                       cx="12"
@@ -178,7 +178,7 @@ export default function Login() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
                   </svg>
-                  Signing in...
+                  Processing...
                 </span>
               ) : (
                 "Sign In"
@@ -186,14 +186,20 @@ export default function Login() {
             </motion.button>
 
             {/* Hint */}
-            <p className="text-center text-xs text-text-muted pt-2">
-              Demo credentials:{" "}
-              <span className="text-text-secondary font-medium">
-                admin@edulearn.com
-              </span>{" "}
-              /{" "}
-              <span className="text-text-secondary font-medium">Admin@123</span>
-            </p>
+            <div className="pt-2">
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="h-[1px] flex-1 bg-border" />
+                    <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Demo Account</span>
+                    <div className="h-[1px] flex-1 bg-border" />
+                </div>
+                <div className="bg-surface-alt/50 rounded-2xl p-4 border border-border/50 text-center">
+                    <p className="text-[11px] text-text-muted font-bold">
+                        <span className="text-text-secondary">admin@edulearn.com</span>
+                        <span className="mx-2 opacity-30">/</span>
+                        <span className="text-text-secondary">Admin@123</span>
+                    </p>
+                </div>
+            </div>
           </form>
         </div>
       </motion.div>

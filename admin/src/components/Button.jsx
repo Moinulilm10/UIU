@@ -2,27 +2,23 @@ import { motion } from "framer-motion";
 
 /**
  * Reusable Button component with multiple style variants.
- * @param {'primary'|'secondary'|'danger'|'ghost'} variant - Visual style
- * @param {string} size - Button size ('sm' | 'md' | 'lg')
- * @param {React.ReactNode} children - Button content
- * @param {string} className - Additional CSS classes
- * @param {boolean} disabled - Disabled state
+ * Updated with 2xl border radius and better padding.
  */
 const variants = {
   primary:
-    "bg-primary text-white hover:bg-primary/90 shadow-md shadow-primary/20",
+    "bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20",
   secondary:
-    "bg-surface-alt text-text-primary hover:bg-surface-alt/80 border border-border",
+    "bg-surface-alt text-text-primary hover:bg-surface-alt/80 border border-border shadow-sm",
   danger:
-    "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20",
+    "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 shadow-sm",
   ghost:
     "bg-transparent text-text-secondary hover:bg-surface-alt hover:text-text-primary",
 };
 
 const sizes = {
-  sm: "px-3 py-1.5 text-xs",
-  md: "px-4 py-2 text-sm",
-  lg: "px-6 py-3 text-base",
+  sm: "px-4 py-2 text-xs",
+  md: "px-5 py-2.5 text-sm",
+  lg: "px-8 py-4 text-base",
 };
 
 export default function Button({
@@ -35,10 +31,10 @@ export default function Button({
 }) {
   return (
     <motion.button
-      whileHover={!disabled ? { scale: 1.02 } : {}}
-      whileTap={!disabled ? { scale: 0.98 } : {}}
+      whileHover={!disabled ? { scale: 1.02, y: -1 } : {}}
+      whileTap={!disabled ? { scale: 0.98, y: 0 } : {}}
       className={`
-        inline-flex items-center justify-center gap-2 rounded-xl font-medium
+        inline-flex items-center justify-center gap-2.5 rounded-2xl font-bold
         transition-all duration-300 cursor-pointer
         disabled:opacity-50 disabled:cursor-not-allowed
         ${variants[variant]} ${sizes[size]} ${className}

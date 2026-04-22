@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ArrowRightLeft, Search, Mail, Calendar } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRightLeft, Search, Mail, Calendar, UserCheck } from "lucide-react";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -52,125 +52,149 @@ export default function Students() {
   };
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="space-y-10">
       {/* Header */}
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-text-primary">Student Management</h1>
-        <p className="text-xs sm:text-sm text-text-muted mt-1">
-          {filteredStudents.length} student{filteredStudents.length !== 1 ? "s" : ""} found
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">Student Directory</h1>
+        <p className="text-sm text-text-muted font-medium opacity-80">
+          Viewing {filteredStudents.length} enrolled student{filteredStudents.length !== 1 ? "s" : ""} across all batches
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-surface border border-border flex-1">
-          <Search size={15} className="text-text-muted shrink-0" />
+      {/* Filters Toolbar */}
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 bg-surface/30 p-2 rounded-3xl border border-border/50">
+        <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface border border-border flex-1 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+          <Search size={18} className="text-text-muted shrink-0" />
           <input
-            type="text" placeholder="Search by name or email..."
+            type="text" placeholder="Search by student name or email address..."
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            className="bg-transparent text-sm text-text-primary placeholder:text-text-muted outline-none w-full"
+            className="bg-transparent text-sm text-text-primary placeholder:text-text-muted/60 outline-none w-full font-medium"
           />
         </div>
-        <select
-          value={selectedBatchId || ""}
-          onChange={(e) => { setSelectedBatchId(e.target.value ? Number(e.target.value) : null); setCurrentPage(1); }}
-          className="px-4 py-2.5 rounded-xl bg-surface border border-border text-sm text-text-primary outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
-        >
-          <option value="">All Batches</option>
-          {batchList.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}
-        </select>
+        <div className="flex flex-col sm:flex-row gap-2">
+            <select
+                value={selectedBatchId || ""}
+                onChange={(e) => { setSelectedBatchId(e.target.value ? Number(e.target.value) : null); setCurrentPage(1); }}
+                className="px-5 py-3 rounded-2xl bg-surface border border-border text-sm font-bold text-text-primary outline-none focus:ring-2 focus:ring-primary/10 cursor-pointer hover:bg-surface-alt transition-colors"
+            >
+                <option value="">All Batches</option>
+                {batchList.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}
+            </select>
+        </div>
       </div>
 
       {/* Table */}
-      <Card hover={false} className="overflow-hidden !p-0">
+      <Card hover={false} className="overflow-hidden !p-0 border border-border/50">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Student</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider hidden sm:table-cell">Email</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Batch</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider hidden md:table-cell">Enrolled</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Action</th>
+              <tr className="bg-surface-alt/30 border-b border-border">
+                <th className="text-left px-6 py-5 text-xs font-black text-text-muted uppercase tracking-[0.2em]">Student Identity</th>
+                <th className="text-left px-6 py-5 text-xs font-black text-text-muted uppercase tracking-[0.2em] hidden sm:table-cell">Contact Details</th>
+                <th className="text-left px-6 py-5 text-xs font-black text-text-muted uppercase tracking-[0.2em] text-center">Current Batch</th>
+                <th className="text-left px-6 py-5 text-xs font-black text-text-muted uppercase tracking-[0.2em] hidden md:table-cell">Enrollment Date</th>
+                <th className="text-right px-6 py-5 text-xs font-black text-text-muted uppercase tracking-[0.2em]">Operations</th>
               </tr>
             </thead>
-            <tbody>
-              {paginatedStudents.map((student, i) => (
-                <motion.tr
-                  key={student.id}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.03 }}
-                  className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors"
-                >
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
-                        {student.name.split(" ").map((n) => n[0]).join("")}
-                      </div>
-                      <span className="text-sm font-medium text-text-primary truncate">{student.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-text-secondary hidden sm:table-cell">
-                    <div className="flex items-center gap-1.5">
-                      <Mail size={12} className="text-text-muted shrink-0" />
-                      <span className="truncate">{student.email}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="inline-flex px-2 py-0.5 rounded-md bg-surface-alt text-xs font-medium text-text-primary whitespace-nowrap">
-                      {getBatchName(student.batchId)}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-text-secondary hidden md:table-cell">
-                    <div className="flex items-center gap-1.5 whitespace-nowrap">
-                      <Calendar size={12} className="text-text-muted shrink-0" />
-                      {new Date(student.enrolledDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Button variant="ghost" size="sm" onClick={() => { setMigrateStudent(student); setTargetBatchId(""); }}>
-                      <ArrowRightLeft size={14} /> <span className="hidden sm:inline">Migrate</span>
-                    </Button>
-                  </td>
-                </motion.tr>
-              ))}
+            <tbody className="divide-y divide-border/50">
+              <AnimatePresence mode="popLayout">
+                {paginatedStudents.map((student, i) => (
+                    <motion.tr
+                    key={student.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ delay: i * 0.04, duration: 0.3 }}
+                    className="hover:bg-surface-alt/30 transition-colors group"
+                    >
+                    <td className="px-6 py-5">
+                        <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary font-black text-xs shrink-0 shadow-inner group-hover:scale-110 transition-transform">
+                            {student.name.split(" ").map((n) => n[0]).join("")}
+                        </div>
+                        <span className="text-sm font-bold text-text-primary group-hover:text-primary transition-colors">{student.name}</span>
+                        </div>
+                    </td>
+                    <td className="px-6 py-5 text-text-secondary hidden sm:table-cell">
+                        <div className="flex items-center gap-2 font-medium opacity-80">
+                        <Mail size={14} className="text-text-muted shrink-0" />
+                        <span className="truncate">{student.email}</span>
+                        </div>
+                    </td>
+                    <td className="px-6 py-5 text-center">
+                        <span className="inline-flex px-3 py-1 rounded-xl bg-surface-alt border border-border/50 text-[10px] font-black uppercase tracking-wider text-text-primary">
+                        {getBatchName(student.batchId)}
+                        </span>
+                    </td>
+                    <td className="px-6 py-5 text-text-secondary hidden md:table-cell">
+                        <div className="flex items-center gap-2 font-semibold opacity-70 whitespace-nowrap">
+                        <Calendar size={14} className="text-text-muted shrink-0" />
+                        {new Date(student.enrolledDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </div>
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                        <Button variant="ghost" size="sm" className="px-4 py-2 rounded-xl" onClick={() => { setMigrateStudent(student); setTargetBatchId(""); }}>
+                        <ArrowRightLeft size={16} /> <span className="hidden sm:inline ml-1 font-bold">Migrate</span>
+                        </Button>
+                    </td>
+                    </motion.tr>
+                ))}
+              </AnimatePresence>
               {paginatedStudents.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-12 text-center text-sm text-text-muted">No students found.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-20 text-center">
+                    <div className="flex flex-col items-center gap-4 opacity-40">
+                        <Search size={48} />
+                        <p className="text-sm font-bold">No students matched your criteria</p>
+                    </div>
+                </td></tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="px-4 pb-3">
+        <div className="px-6 py-6 bg-surface-alt/10 border-t border-border/50">
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       </Card>
 
       {/* Migrate Modal */}
-      <Modal isOpen={!!migrateStudent} onClose={() => setMigrateStudent(null)} title="Migrate Student">
+      <Modal isOpen={!!migrateStudent} onClose={() => setMigrateStudent(null)} title="Student Migration">
         {migrateStudent && (
-          <div className="space-y-4">
-            <p className="text-sm text-text-secondary">
-              Move <strong className="text-text-primary">{migrateStudent.name}</strong> from{" "}
-              <strong className="text-text-primary">{getBatchName(migrateStudent.batchId)}</strong> to:
-            </p>
-            <select
-              value={targetBatchId} onChange={(e) => setTargetBatchId(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-sm text-text-primary outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
-            >
-              <option value="">Select target batch...</option>
-              {getAvailableBatches(migrateStudent.batchId).map((b) => (
-                <option key={b.id} value={b.id}>{b.name} ({b.studentCount}/{b.maxLimit})</option>
-              ))}
-            </select>
-            {targetBatchId && (() => {
-              const tb = batchList.find((b) => b.id === Number(targetBatchId));
-              return tb && tb.studentCount >= tb.maxLimit ? <p className="text-xs text-red-400">⚠ This batch is at max capacity.</p> : null;
-            })()}
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" onClick={() => setMigrateStudent(null)}>Cancel</Button>
-              <Button onClick={handleMigrate} disabled={!targetBatchId}>Confirm Migration</Button>
+          <div className="space-y-6">
+            <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface-alt/50 border border-border/50">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                    <UserCheck size={24} />
+                </div>
+                <div>
+                    <p className="text-sm font-black text-text-primary">{migrateStudent.name}</p>
+                    <p className="text-xs text-text-muted font-bold mt-0.5">Currently in {getBatchName(migrateStudent.batchId)}</p>
+                </div>
+            </div>
+
+            <div className="space-y-3">
+                <label className="block text-xs font-black text-text-secondary uppercase tracking-[0.15em] px-1">Target Batch Selection</label>
+                <select
+                    value={targetBatchId} onChange={(e) => setTargetBatchId(e.target.value)}
+                    className="w-full px-5 py-4 rounded-2xl bg-background border border-border text-sm font-bold text-text-primary outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer"
+                >
+                    <option value="">Select target batch...</option>
+                    {getAvailableBatches(migrateStudent.batchId).map((b) => (
+                        <option key={b.id} value={b.id}>{b.name} — ({b.studentCount}/{b.maxLimit} Capacity)</option>
+                    ))}
+                </select>
+                {targetBatchId && (() => {
+                    const tb = batchList.find((b) => b.id === Number(targetBatchId));
+                    return tb && tb.studentCount >= tb.maxLimit ? (
+                        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-[10px] text-red-400 font-black uppercase text-center tracking-wider">
+                            ⚠ Selected batch is at max capacity
+                        </div>
+                    ) : null;
+                })()}
+            </div>
+
+            <div className="flex justify-end gap-3 pt-6 border-t border-border/50">
+              <Button variant="ghost" className="rounded-xl" onClick={() => setMigrateStudent(null)}>Cancel</Button>
+              <Button className="rounded-xl px-10" onClick={handleMigrate} disabled={!targetBatchId}>Complete Migration</Button>
             </div>
           </div>
         )}

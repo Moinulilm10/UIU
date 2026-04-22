@@ -1,29 +1,27 @@
 /**
  * Standardized themed Input component.
- * @param {string} label - Input label text
- * @param {string} error - Error message to display
- * @param {string} className - Additional CSS classes
+ * Enhanced with 2xl border radius and better padding for premium feel.
  */
 export default function Input({ label, error, className = "", ...props }) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       {label && (
-        <label className="block text-sm font-medium text-text-secondary">
+        <label className="block text-sm font-bold text-text-secondary px-1">
           {label}
         </label>
       )}
       <input
         className={`
-          w-full px-4 py-2.5 rounded-xl bg-background border border-border
-          text-text-primary placeholder:text-text-muted
-          focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary
-          transition-all duration-200 text-sm
-          ${error ? "border-red-500/50 focus:ring-red-500/40" : ""}
+          w-full px-5 py-3 rounded-2xl bg-background border border-border
+          text-text-primary placeholder:text-text-muted/60
+          focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary
+          transition-all duration-300 text-sm font-medium
+          ${error ? "border-red-500/50 focus:ring-red-500/10" : ""}
           ${className}
         `}
         {...props}
       />
-      {error && <p className="text-xs text-red-400">{error}</p>}
+      {error && <p className="text-xs text-red-400 font-bold px-1">{error}</p>}
     </div>
   );
 }
