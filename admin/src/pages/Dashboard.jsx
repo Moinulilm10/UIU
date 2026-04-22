@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   GraduationCap, Users, DollarSign, BookOpen,
   TrendingUp, TrendingDown, ArrowUpRight,
@@ -8,6 +9,7 @@ import { batches, students, enrollmentTrends } from "../data/mockData";
 
 export default function Dashboard() {
   "use no memo";
+  const navigate = useNavigate();
   const totalBatches = batches.length;
   const totalStudents = students.length;
   const activeCourses = new Set(batches.map((b) => b.courseName)).size;
@@ -105,7 +107,12 @@ export default function Dashboard() {
           <Card hover={false} className="h-full !p-6 sm:!p-8">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight">Top Batches</h3>
-              <button className="text-xs font-bold text-primary hover:underline underline-offset-4">View All</button>
+              <button 
+                onClick={() => navigate("/batches")}
+                className="text-xs font-bold text-primary hover:underline underline-offset-4"
+              >
+                View All
+              </button>
             </div>
             <div className="space-y-6">
               {sortedBatches.slice(0, 5).map((batch, i) => {
@@ -134,7 +141,12 @@ export default function Dashboard() {
           <Card hover={false} className="h-full !p-6 sm:!p-8">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight">Course Distribution</h3>
-              <button className="text-xs font-bold text-primary hover:underline underline-offset-4">Manage Courses</button>
+              <button 
+                onClick={() => navigate("/courses")}
+                className="text-xs font-bold text-primary hover:underline underline-offset-4"
+              >
+                Manage Courses
+              </button>
             </div>
             <div className="space-y-1.5">
               {batches.slice(0, 5).map((batch) => {

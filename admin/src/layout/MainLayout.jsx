@@ -5,7 +5,7 @@ import {
   LayoutDashboard, GraduationCap, Users, Settings,
   Menu, X, ChevronRight, Bell, Search, LogOut,
   Sun, Moon, User, ChevronDown, FileText, BookOpen, Book,
-  ClipboardList, Video
+  ClipboardList, Video, Clock
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -31,21 +31,44 @@ export default function MainLayout() {
   "use no memo";
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notificationsList, setNotificationsList] = useState([]);
   const location = useLocation();
   const { user, logout } = useAuth();
   const { theme, toggleTheme, isDark } = useTheme();
   const profileRef = useRef(null);
+  const notificationsRef = useRef(null);
 
-  // Close profile dropdown on outside click
+  // Load notifications from mock data
+  useEffect(() => {
+    import("../data/mockData").then((data) => {
+      setNotificationsList(data.notifications || []);
+    });
+  }, []);
+
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOpen(false);
       }
+      if (notificationsRef.current && !notificationsRef.current.contains(e.target)) {
+        setNotificationsOpen(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const unreadCount = notificationsList.filter(n => !n.read).length;
+
+  const markAsRead = (id) => {
+    setNotificationsList(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const markAllAsRead = () => {
+    setNotificationsList(prev => prev.map(n => ({ ...n, read: true })));
+  };
 
   // Close profile dropdown on route change
   useEffect(() => {
@@ -187,10 +210,98 @@ export default function MainLayout() {
             </button>
 
             {/* Notifications */}
-            <button className="relative p-2.5 rounded-xl text-text-muted hover:bg-surface-alt hover:text-text-primary transition-all duration-300 cursor-pointer border border-border/50">
-              <Bell size={20} />
-              <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 border-2 border-surface rounded-full" />
-            </button>
+            <div className="relative" ref={notificationsRef}>
+              <button
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                className={`p-2.5 rounded-xl transition-all duration-300 cursor-pointer border border-border/50 relative ${
+                  notificationsOpen ? "bg-surface-alt text-primary border-primary/50 shadow-lg shadow-primary/5" : "text-text-muted hover:bg-surface-alt hover:text-text-primary"
+                }`}
+              >
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 border-2 border-surface rounded-full shadow-sm animate-pulse" />
+                )}
+              </button>
+
+              <AnimatePresence>
+                {notificationsOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 12, scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-surface rounded-2xl border border-border shadow-2xl shadow-black/20 overflow-hidden z-50 flex flex-col"
+                  >
+                    <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-surface-alt/20">
+                      <h3 className="text-sm font-extrabold text-text-primary uppercase tracking-widest">Notifications</h3>
+                      {unreadCount > 0 && (
+                        <button 
+                          onClick={markAllAsRead}
+                          className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-tighter"
+                        >
+                          Mark all as read
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="max-h-[400px] overflow-y-auto scrollbar-none">
+                      {notificationsList.length > 0 ? (
+                        <div className="divide-y divide-border">
+                          {notificationsList.map((notif) => (
+                            <div 
+                              key={notif.id}
+                              onClick={() => markAsRead(notif.id)}
+                              className={`px-5 py-4 flex gap-4 hover:bg-surface-alt transition-colors cursor-pointer group ${!notif.read ? "bg-primary/[0.02]" : ""}`}
+                            >
+                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
+                                notif.type === 'enrollment' ? 'bg-emerald-500/10 text-emerald-500' :
+                                notif.type === 'assignment' ? 'bg-blue-500/10 text-blue-500' :
+                                notif.type === 'class' ? 'bg-orange-500/10 text-orange-500' :
+                                'bg-purple-500/10 text-purple-500'
+                              }`}>
+                                {notif.type === 'enrollment' ? <GraduationCap size={18} /> :
+                                 notif.type === 'assignment' ? <ClipboardList size={18} /> :
+                                 notif.type === 'class' ? <Video size={18} /> :
+                                 <User size={18} />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <p className={`text-xs font-bold truncate ${!notif.read ? "text-text-primary" : "text-text-muted"}`}>
+                                    {notif.title}
+                                  </p>
+                                  {!notif.read && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                                </div>
+                                <p className="text-[11px] text-text-muted font-medium line-clamp-2 leading-relaxed mb-1.5">
+                                  {notif.message}
+                                </p>
+                                <div className="flex items-center gap-1.5 text-[10px] text-text-muted font-black uppercase tracking-tighter opacity-60">
+                                  <Clock size={10} />
+                                  <span>{notif.time}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="px-10 py-16 text-center">
+                          <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center text-text-muted mx-auto mb-4 border border-border/50">
+                            <Bell size={24} />
+                          </div>
+                          <p className="text-sm font-bold text-text-primary">No notifications yet</p>
+                          <p className="text-xs text-text-muted mt-1 font-medium">When you have alerts, they will appear here.</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="px-5 py-3 border-t border-border bg-surface-alt/10 text-center">
+                      <button className="text-[11px] font-bold text-text-muted hover:text-primary transition-colors">
+                        View All Activity
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Profile dropdown */}
             <div className="relative" ref={profileRef}>

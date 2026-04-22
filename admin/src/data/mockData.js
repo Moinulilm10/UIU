@@ -199,3 +199,38 @@ export const classes = [
     status: "upcoming"
   }
 ];
+
+export const notifications = [
+  {
+    id: 1,
+    title: "New Student Enrolled",
+    message: "John Doe has enrolled in Web Development Bootcamp.",
+    time: "5 minutes ago",
+    type: "enrollment",
+    read: false
+  },
+  {
+    id: 2,
+    title: "Assignment Submitted",
+    message: "Sarah Smith submitted 'Intro to CSS Flexbox'.",
+    time: "2 hours ago",
+    type: "assignment",
+    read: false
+  },
+  {
+    id: 3,
+    title: "Class Starting Soon",
+    message: "Mastering React Design Patterns starts in 15 minutes.",
+    time: "15 minutes ago",
+    type: "class",
+    read: true
+  },
+  {
+    id: 4,
+    title: "New Teacher Applied",
+    message: "Prof. Robert Wilson applied for Computer Science Dept.",
+    time: "1 day ago",
+    type: "teacher",
+    read: true
+  }
+];
