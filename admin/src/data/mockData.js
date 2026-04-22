@@ -174,3 +174,28 @@ export const assignments = [
     status: "draft"
   }
 ];
+
+export const classes = [
+  {
+    id: "cls-1",
+    title: "Mastering React Design Patterns",
+    batchId: "B-2024-01",
+    teacherId: "T-101",
+    platform: "Zoom",
+    link: "https://zoom.us/j/123456789",
+    date: "2024-05-10",
+    time: "10:00 AM",
+    status: "upcoming"
+  },
+  {
+    id: "cls-2",
+    title: "Data Visualization with D3.js",
+    batchId: "B-2024-02",
+    teacherId: "T-102",
+    platform: "Google Meet",
+    link: "https://meet.google.com/abc-defg-hij",
+    date: "2024-05-12",
+    time: "02:00 PM",
+    status: "upcoming"
+  }
+];

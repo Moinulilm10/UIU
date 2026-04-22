@@ -5,7 +5,7 @@ import {
   LayoutDashboard, GraduationCap, Users, Settings,
   Menu, X, ChevronRight, Bell, Search, LogOut,
   Sun, Moon, User, ChevronDown, FileText, BookOpen, Book,
-  ClipboardList
+  ClipboardList, Video
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -15,6 +15,7 @@ const navItems = [
   { to: "/courses", label: "Courses", icon: BookOpen },
   { to: "/subjects", label: "Subjects", icon: Book },
   { to: "/assignments", label: "Assignments", icon: ClipboardList },
+  { to: "/classes", label: "Classes", icon: Video },
   { to: "/teachers", label: "Teachers", icon: User },
   { to: "/batches", label: "Batch Management", icon: GraduationCap },
   { to: "/students", label: "Students", icon: Users },
