@@ -1,19 +1,32 @@
 /**
  * Mock Data for E-Learning Admin Dashboard
- * Contains batches and students with realistic sample data.
+ * Contains courses, batches, and students with realistic sample data.
  */
 
+export const courses = [
+  { id: 1, title: "Web Development Bootcamp", description: "Master full-stack web development from scratch.", duration: "6 Months", level: "Beginner", batchCount: 1, studentCount: 28 },
+  { id: 2, title: "Data Science Fundamentals", description: "Learn data analysis, visualization and modeling.", duration: "4 Months", level: "Intermediate", batchCount: 1, studentCount: 25 },
+  { id: 3, title: "UI/UX Design Mastery", description: "Design stunning user interfaces and experiences.", duration: "3 Months", level: "All Levels", batchCount: 1, studentCount: 18 },
+  { id: 4, title: "Mobile App Development", description: "Build native mobile apps for iOS and Android.", duration: "5 Months", level: "Intermediate", batchCount: 1, studentCount: 22 },
+  { id: 5, title: "Cloud Computing Essentials", description: "Learn AWS, Azure, and Google Cloud platforms.", duration: "4 Months", level: "Advanced", batchCount: 1, studentCount: 20 },
+  { id: 6, title: "Machine Learning with Python", description: "Dive deep into AI and predictive algorithms.", duration: "6 Months", level: "Advanced", batchCount: 1, studentCount: 15 },
+  { id: 7, title: "Cybersecurity Fundamentals", description: "Protect systems and networks from digital attacks.", duration: "3 Months", level: "Intermediate", batchCount: 1, studentCount: 30 },
+  { id: 8, title: "DevOps & CI/CD Pipelines", description: "Automate development and operations workflows.", duration: "4 Months", level: "Advanced", batchCount: 1, studentCount: 12 },
+  { id: 9, title: "Blockchain Development", description: "Build decentralized apps and smart contracts.", duration: "5 Months", level: "Intermediate", batchCount: 1, studentCount: 8 },
+  { id: 10, title: "Digital Marketing Pro", description: "Grow businesses using SEO, Ads, and Social Media.", duration: "2 Months", level: "Beginner", batchCount: 1, studentCount: 19 },
+];
+
 export const batches = [
-  { id: 1, name: "Batch Alpha", courseName: "Web Development Bootcamp", studentCount: 28, maxLimit: 30, status: "open" },
-  { id: 2, name: "Batch Beta", courseName: "Data Science Fundamentals", studentCount: 25, maxLimit: 25, status: "closed" },
-  { id: 3, name: "Batch Gamma", courseName: "UI/UX Design Mastery", studentCount: 18, maxLimit: 30, status: "open" },
-  { id: 4, name: "Batch Delta", courseName: "Mobile App Development", studentCount: 22, maxLimit: 25, status: "open" },
-  { id: 5, name: "Batch Epsilon", courseName: "Cloud Computing Essentials", studentCount: 20, maxLimit: 20, status: "closed" },
-  { id: 6, name: "Batch Zeta", courseName: "Machine Learning with Python", studentCount: 15, maxLimit: 30, status: "open" },
-  { id: 7, name: "Batch Eta", courseName: "Cybersecurity Fundamentals", studentCount: 30, maxLimit: 30, status: "closed" },
-  { id: 8, name: "Batch Theta", courseName: "DevOps & CI/CD Pipelines", studentCount: 12, maxLimit: 20, status: "open" },
-  { id: 9, name: "Batch Iota", courseName: "Blockchain Development", studentCount: 8, maxLimit: 15, status: "open" },
-  { id: 10, name: "Batch Kappa", courseName: "Digital Marketing Pro", studentCount: 19, maxLimit: 25, status: "open" },
+  { id: 1, name: "Batch Alpha", courseId: 1, courseName: "Web Development Bootcamp", studentCount: 28, maxLimit: 30, status: "open" },
+  { id: 2, name: "Batch Beta", courseId: 2, courseName: "Data Science Fundamentals", studentCount: 25, maxLimit: 25, status: "closed" },
+  { id: 3, name: "Batch Gamma", courseId: 3, courseName: "UI/UX Design Mastery", studentCount: 18, maxLimit: 30, status: "open" },
+  { id: 4, name: "Batch Delta", courseId: 4, courseName: "Mobile App Development", studentCount: 22, maxLimit: 25, status: "open" },
+  { id: 5, name: "Batch Epsilon", courseId: 5, courseName: "Cloud Computing Essentials", studentCount: 20, maxLimit: 20, status: "closed" },
+  { id: 6, name: "Batch Zeta", courseId: 6, courseName: "Machine Learning with Python", studentCount: 15, maxLimit: 30, status: "open" },
+  { id: 7, name: "Batch Eta", courseId: 7, courseName: "Cybersecurity Fundamentals", studentCount: 30, maxLimit: 30, status: "closed" },
+  { id: 8, name: "Batch Theta", courseId: 8, courseName: "DevOps & CI/CD Pipelines", studentCount: 12, maxLimit: 20, status: "open" },
+  { id: 9, name: "Batch Iota", courseId: 9, courseName: "Blockchain Development", studentCount: 8, maxLimit: 15, status: "open" },
+  { id: 10, name: "Batch Kappa", courseId: 10, courseName: "Digital Marketing Pro", studentCount: 19, maxLimit: 25, status: "open" },
 ];
 
 export const students = [

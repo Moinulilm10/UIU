@@ -7,10 +7,11 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Input from "../components/Input";
 import Select from "../components/Select";
-import { batches as initialBatches, students as initialStudents } from "../data/mockData";
+import { batches as initialBatches, students as initialStudents, courses as initialCourses } from "../data/mockData";
 
 export default function BatchManagement() {
   "use no memo";
+  const [courseList] = useState(initialCourses);
   const [batchList, setBatchList] = useState(() =>
     initialBatches.map((b) => ({
       ...b,
@@ -28,7 +29,7 @@ export default function BatchManagement() {
   const [migrateStudent, setMigrateStudent] = useState(null);
   const [targetBatchId, setTargetBatchId] = useState("");
 
-  const [form, setForm] = useState({ name: "", courseName: "", maxLimit: "" });
+  const [form, setForm] = useState({ name: "", courseId: "", maxLimit: "" });
 
   const filteredBatches = useMemo(() => {
     if (!searchQuery) return batchList;
@@ -49,28 +50,48 @@ export default function BatchManagement() {
   }, [studentList, viewingStudentsInBatch, studentSearchQuery]);
 
   const openCreate = () => {
-    setForm({ name: "", courseName: "", maxLimit: "" });
+    setForm({ name: "", courseId: "", maxLimit: "" });
     setShowCreateModal(true);
   };
 
   const openEdit = (batch) => {
-    setForm({ name: batch.name, courseName: batch.courseName, maxLimit: String(batch.maxLimit) });
+    setForm({ name: batch.name, courseId: batch.courseId || "", maxLimit: String(batch.maxLimit) });
     setEditBatch(batch);
   };
 
   const handleSave = () => {
-    if (!form.name || !form.courseName || !form.maxLimit) return;
+    if (!form.name || !form.courseId || !form.maxLimit) return;
+    const selectedCourse = courseList.find(c => String(c.id) === String(form.courseId));
+    
     if (editBatch) {
       setBatchList((prev) =>
         prev.map((b) =>
           b.id === editBatch.id
-            ? { ...b, name: form.name, courseName: form.courseName, maxLimit: Number(form.maxLimit), status: b.studentCount >= Number(form.maxLimit) ? "closed" : "open" }
+            ? { 
+                ...b, 
+                name: form.name, 
+                courseId: Number(form.courseId),
+                courseName: selectedCourse?.title || "Unknown Course",
+                maxLimit: Number(form.maxLimit), 
+                status: b.studentCount >= Number(form.maxLimit) ? "closed" : "open" 
+              }
             : b
         )
       );
       setEditBatch(null);
     } else {
-      setBatchList((prev) => [...prev, { id: Date.now(), name: form.name, courseName: form.courseName, studentCount: 0, maxLimit: Number(form.maxLimit), status: "open" }]);
+      setBatchList((prev) => [
+        ...prev, 
+        { 
+          id: Date.now(), 
+          name: form.name, 
+          courseId: Number(form.courseId),
+          courseName: selectedCourse?.title || "Unknown Course",
+          studentCount: 0, 
+          maxLimit: Number(form.maxLimit), 
+          status: "open" 
+        }
+      ]);
       setShowCreateModal(false);
     }
   };
@@ -100,6 +121,12 @@ export default function BatchManagement() {
     setMigrateStudent(null);
     setTargetBatchId("");
   };
+
+  const courseOptions = courseList.map(c => ({
+    value: c.id,
+    label: c.title,
+    sublabel: c.level
+  }));
 
   return (
     <div className="space-y-10">
@@ -346,7 +373,13 @@ export default function BatchManagement() {
       <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Create New Batch">
         <div className="space-y-6">
           <Input label="Batch Name" placeholder="e.g. Batch Lambda" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <Input label="Course Name" placeholder="e.g. React Advanced" value={form.courseName} onChange={(e) => setForm({ ...form, courseName: e.target.value })} />
+          <Select 
+            label="Associated Course" 
+            placeholder="Select a course..." 
+            value={form.courseId} 
+            onChange={(val) => setForm({ ...form, courseId: val })} 
+            options={courseOptions}
+          />
           <Input label="Max Limit" type="number" placeholder="e.g. 30" value={form.maxLimit} onChange={(e) => setForm({ ...form, maxLimit: e.target.value })} />
           <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
             <Button variant="ghost" className="rounded-xl" onClick={() => setShowCreateModal(false)}>Cancel</Button>
@@ -357,7 +390,13 @@ export default function BatchManagement() {
       <Modal isOpen={!!editBatch} onClose={() => setEditBatch(null)} title="Edit Batch Details">
         <div className="space-y-6">
           <Input label="Batch Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <Input label="Course Name" value={form.courseName} onChange={(e) => setForm({ ...form, courseName: e.target.value })} />
+          <Select 
+            label="Associated Course" 
+            placeholder="Select a course..." 
+            value={form.courseId} 
+            onChange={(val) => setForm({ ...form, courseId: val })} 
+            options={courseOptions}
+          />
           <Input label="Max Limit" type="number" value={form.maxLimit} onChange={(e) => setForm({ ...form, maxLimit: e.target.value })} />
           <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
             <Button variant="ghost" className="rounded-xl" onClick={() => setEditBatch(null)}>Cancel</Button>

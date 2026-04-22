@@ -7,6 +7,7 @@ import Students from "./pages/Students";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Resources from "./pages/Resources";
+import Courses from "./pages/Courses";
 
 /**
  * ProtectedRoute — redirects to /login if not authenticated.
@@ -71,6 +72,7 @@ export default function App() {
           <Route path="/batches" element={<BatchManagement />} />
           <Route path="/students" element={<Students />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/courses" element={<Courses />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 
