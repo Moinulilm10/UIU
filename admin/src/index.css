@@ -1,22 +1,25 @@
 @import "tailwindcss";
 
-/* ──────────────────────────────────────────────
-   Dark Theme (default)
-   ────────────────────────────────────────────── */
 @theme {
+  /* Colors */
   --color-primary: #E29B41;
   --color-background: #0c0e14;
   --color-surface: #13161f;
   --color-surface-alt: #1a1e2a;
   --color-border: #232836;
+  
   --color-text-primary: #f0f0f5;
   --color-text-secondary: #a0a4b8;
   --color-text-muted: #5c6178;
+
+  /* Fonts */
+  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Transitions */
+  --transition-theme: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
-/* ──────────────────────────────────────────────
-   Light Theme overrides via data-theme attribute
-   ────────────────────────────────────────────── */
+/* Light Theme Overrides */
 :root[data-theme="light"] {
   --color-primary: #D08A30;
   --color-background: #f5f6fa;
@@ -28,84 +31,61 @@
   --color-text-muted: #8a8fa8;
 }
 
-/* ──────────────────────────────────────────────
-   Base reset & typography
-   ────────────────────────────────────────────── */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Base Styles */
+@layer base {
+  html {
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+    transition: var(--transition-theme);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+    color: var(--color-text-primary);
+  }
 }
 
-html {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
-  min-height: 100vh;
-  line-height: 1.6;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* ──────────────────────────────────────────────
-   Custom scrollbar
-   ────────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
-}
-
-/* ──────────────────────────────────────────────
-   Selection
-   ────────────────────────────────────────────── */
-::selection {
-  background-color: #E29B4140;
-  color: var(--color-text-primary);
-}
-
-:root[data-theme="light"] ::selection {
-  background-color: #D08A3040;
-}
-
-/* ──────────────────────────────────────────────
-   Light theme select dropdown fix
-   ────────────────────────────────────────────── */
-:root[data-theme="light"] select option {
-  background-color: #ffffff;
-  color: #1a1d2b;
-}
-
-/* ──────────────────────────────────────────────
-   Smooth theme transitions
-   ────────────────────────────────────────────── */
-.bg-surface,
-.bg-background,
-.bg-surface-alt,
-.border-border {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+/* Utilities / Fixes */
+@layer utilities {
+  .theme-transition {
+    transition: var(--transition-theme);
+  }
+  
+  :root[data-theme="light"] select option {
+    background-color: #ffffff;
+    color: #1a1d2b;
+  }
 }
