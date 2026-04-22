@@ -39,7 +39,7 @@ export default function Modal({
             onClick={(e) => e.stopPropagation()}
             className={`
                 relative w-full bg-surface sm:rounded-3xl rounded-t-3xl border border-border
-                shadow-2xl shadow-black/40 overflow-hidden max-h-[90vh] flex flex-col
+                shadow-2xl shadow-black/40 overflow-hidden max-h-[110vh] flex flex-col
                 ${cleanClassName.includes("max-w-") ? cleanClassName : `sm:max-w-lg ${cleanClassName}`}
             `}
           >
@@ -58,7 +58,7 @@ export default function Modal({
             </div>
 
             {/* Body */}
-            <div className="p-6 overflow-y-auto scrollbar-none mb-5">
+            <div className="p-6 overflow-y-auto scrollbar-none mb-0">
               {children}
             </div>
           </motion.div>

@@ -5,6 +5,7 @@ import { ArrowRightLeft, Search, Mail, Calendar, UserCheck } from "lucide-react"
 import Card from "../components/Card";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
+import Select from "../components/Select";
 import Pagination from "../components/Pagination";
 import { batches as initialBatches, students as initialStudents } from "../data/mockData";
 
@@ -72,15 +73,13 @@ export default function Students() {
             className="bg-transparent text-sm text-text-primary placeholder:text-text-muted/60 outline-none w-full font-medium"
           />
         </div>
-        <div className="flex flex-col sm:flex-row gap-2">
-            <select
+        <div className="w-full lg:w-64">
+            <Select
                 value={selectedBatchId || ""}
-                onChange={(e) => { setSelectedBatchId(e.target.value ? Number(e.target.value) : null); setCurrentPage(1); }}
-                className="px-5 py-3 rounded-2xl bg-surface border border-border text-sm font-bold text-text-primary outline-none focus:ring-2 focus:ring-primary/10 cursor-pointer hover:bg-surface-alt transition-colors"
-            >
-                <option value="">All Batches</option>
-                {batchList.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}
-            </select>
+                onChange={(val) => { setSelectedBatchId(val ? Number(val) : null); setCurrentPage(1); }}
+                options={[{ value: "", label: "All Batches" }, ...batchList.map(b => ({ value: b.id, label: b.name, sublabel: b.courseName }))]}
+                placeholder="Filter by batch"
+            />
         </div>
       </div>
 
@@ -171,26 +170,26 @@ export default function Students() {
                 </div>
             </div>
 
-            <div className="space-y-3">
-                <label className="block text-xs font-black text-text-secondary uppercase tracking-[0.15em] px-1">Target Batch Selection</label>
-                <select
-                    value={targetBatchId} onChange={(e) => setTargetBatchId(e.target.value)}
-                    className="w-full px-5 py-4 rounded-2xl bg-background border border-border text-sm font-bold text-text-primary outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer"
-                >
-                    <option value="">Select target batch...</option>
-                    {getAvailableBatches(migrateStudent.batchId).map((b) => (
-                        <option key={b.id} value={b.id}>{b.name} — ({b.studentCount}/{b.maxLimit} Capacity)</option>
-                    ))}
-                </select>
-                {targetBatchId && (() => {
-                    const tb = batchList.find((b) => b.id === Number(targetBatchId));
-                    return tb && tb.studentCount >= tb.maxLimit ? (
-                        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-[10px] text-red-400 font-black uppercase text-center tracking-wider">
-                            ⚠ Selected batch is at max capacity
-                        </div>
-                    ) : null;
-                })()}
-            </div>
+            <Select
+                label="Target Batch Selection"
+                value={targetBatchId}
+                onChange={setTargetBatchId}
+                options={getAvailableBatches(migrateStudent.batchId).map((b) => ({
+                    value: b.id,
+                    label: b.name,
+                    sublabel: `${b.courseName} (${b.studentCount}/${b.maxLimit} Students)`
+                }))}
+                placeholder="Select a destination batch..."
+            />
+
+            {targetBatchId && (() => {
+                const tb = batchList.find((b) => b.id === Number(targetBatchId));
+                return tb && tb.studentCount >= tb.maxLimit ? (
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-[10px] text-red-400 font-black uppercase text-center tracking-wider">
+                        ⚠ Selected batch is at max capacity
+                    </div>
+                ) : null;
+            })()}
 
             <div className="flex justify-end gap-3 pt-6 border-t border-border/50">
               <Button variant="ghost" className="rounded-xl" onClick={() => setMigrateStudent(null)}>Cancel</Button>

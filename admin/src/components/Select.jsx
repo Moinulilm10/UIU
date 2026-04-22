@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Check } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Stylish, reusable Select component.
@@ -12,18 +12,18 @@ import { ChevronDown, Check } from "lucide-react";
  * @param {string} placeholder - Default placeholder
  * @param {string} className - Additional container classes
  */
-export default function Select({ 
-  label, 
-  value, 
-  onChange, 
-  options = [], 
-  placeholder = "Select an option", 
-  className = "" 
+export default function Select({
+  label,
+  value,
+  onChange,
+  options = [],
+  placeholder = "Select an option",
+  className = "",
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
 
-  const selectedOption = options.find(opt => opt.value === value);
+  const selectedOption = options.find((opt) => opt.value === value);
 
   // Close when clicking outside
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Select({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`
-          w-full flex items-center justify-between px-5 py-4 rounded-2xl 
+          w-full flex items-center justify-between px-5 py-4 rounded-2xl
           bg-background border transition-all duration-300 text-left
           ${isOpen ? "border-primary ring-4 ring-primary/10 shadow-lg" : "border-border hover:border-primary/50"}
         `}
@@ -94,7 +94,7 @@ export default function Select({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute left-0 right-0 z-[100] mt-2 p-2 bg-surface border border-border shadow-2xl rounded-2xl max-h-64 overflow-y-auto scrollbar-none"
+            className="absolute  left-0 right-0 z-[100] p-2 bg-surface border border-border shadow-2xl rounded-2xl max-h-64 overflow-y-auto scrollbar-none"
           >
             {options.length > 0 ? (
               <div className="space-y-1">
@@ -105,23 +105,33 @@ export default function Select({
                     onClick={() => handleSelect(option)}
                     className={`
                       w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group
-                      ${option.value === value 
-                        ? "bg-primary text-white shadow-lg shadow-primary/20" 
-                        : "hover:bg-surface-alt text-text-primary"}
+                      ${
+                        option.value === value
+                          ? "bg-primary text-white shadow-lg shadow-primary/20"
+                          : "hover:bg-surface-alt text-text-primary"
+                      }
                     `}
                   >
                     <div className="flex-1 min-w-0 text-left">
-                      <p className={`text-sm font-bold truncate ${option.value === value ? "text-white" : "text-text-primary"}`}>
+                      <p
+                        className={`text-sm font-bold truncate ${option.value === value ? "text-white" : "text-text-primary"}`}
+                      >
                         {option.label}
                       </p>
                       {option.sublabel && (
-                        <p className={`text-[10px] font-medium truncate ${option.value === value ? "text-white/80" : "text-text-muted"}`}>
+                        <p
+                          className={`text-[10px] font-medium truncate ${option.value === value ? "text-white/80" : "text-text-muted"}`}
+                        >
                           {option.sublabel}
                         </p>
                       )}
                     </div>
                     {option.value === value && (
-                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="ml-2">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="ml-2"
+                      >
                         <Check size={16} strokeWidth={3} />
                       </motion.div>
                     )}
