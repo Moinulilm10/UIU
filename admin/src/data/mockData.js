@@ -116,3 +116,38 @@ export const enrollmentTrends = [
   { month: "Nov", count: 120 },
   { month: "Dec", count: 105 },
 ];
+
+export const subjects = [
+  {
+    id: 1,
+    title: "Web Development",
+    description: "Master the art of building modern websites.",
+    modules: [
+      {
+        id: 101,
+        title: "Frontend Basics",
+        content: "<h1>Introduction to HTML & CSS</h1><p>Learn the foundation of the web.</p>",
+        chapters: [
+          {
+            id: 1001,
+            title: "HTML5 Semantic Elements",
+            content: "<p>Deep dive into header, footer, article, and section tags.</p>",
+            topics: [
+              {
+                id: 10001,
+                title: "Layout with Flexbox",
+                content: "<p>Mastering one-dimensional layouts.</p>"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "Data Science",
+    description: "Extract insights from complex data.",
+    modules: []
+  }
+];

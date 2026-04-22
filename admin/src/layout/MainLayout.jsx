@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, GraduationCap, Users, Settings,
   Menu, X, ChevronRight, Bell, Search, LogOut,
-  Sun, Moon, User, ChevronDown, FileText, BookOpen
+  Sun, Moon, User, ChevronDown, FileText, BookOpen, Book
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -12,6 +12,7 @@ import { useTheme } from "../context/ThemeContext";
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/courses", label: "Courses", icon: BookOpen },
+  { to: "/subjects", label: "Subjects", icon: Book },
   { to: "/teachers", label: "Teachers", icon: User },
   { to: "/batches", label: "Batch Management", icon: GraduationCap },
   { to: "/students", label: "Students", icon: Users },
