@@ -133,7 +133,7 @@ export default function Students() {
                         </div>
                     </td>
                     <td className="px-6 py-5 text-right">
-                        <Button variant="ghost" size="sm" className="px-4 py-2 rounded-xl" onClick={() => { setMigrateStudent(student); setTargetBatchId(""); }}>
+                        <Button variant="ghost" size="sm" className="px-4 py-2 rounded-xl cursor-pointer" onClick={() => { setMigrateStudent(student); setTargetBatchId(""); }}>
                         <ArrowRightLeft size={16} /> <span className="hidden sm:inline ml-1 font-bold">Migrate</span>
                         </Button>
                     </td>

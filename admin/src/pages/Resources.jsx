@@ -215,7 +215,7 @@ export default function Resources() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="p-2 rounded-xl text-text-muted hover:text-primary hover:bg-primary/10"
+                      className="p-2 rounded-xl text-text-muted hover:text-primary hover:bg-primary/10 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         setPreviewResource(resource);
@@ -226,7 +226,7 @@ export default function Resources() {
                     <Button
                       variant="danger"
                       size="sm"
-                      className="p-2 rounded-xl"
+                      className="p-2 rounded-xl cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         setDeleteConfirm(resource);

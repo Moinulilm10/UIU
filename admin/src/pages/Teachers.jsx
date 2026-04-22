@@ -186,7 +186,7 @@ export default function Teachers() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="p-2 rounded-xl text-text-muted hover:text-primary hover:bg-primary/10"
+                        className="p-2 rounded-xl text-text-muted hover:text-primary hover:bg-primary/10 cursor-pointer"
                         onClick={() => handleOpenModal(teacher)}
                       >
                         <Edit2 size={16} />
@@ -194,7 +194,7 @@ export default function Teachers() {
                       <Button
                         variant="danger"
                         size="sm"
-                        className="p-2 rounded-xl"
+                        className="p-2 rounded-xl cursor-pointer"
                         onClick={() => setDeleteConfirm(teacher)}
                       >
                         <Trash2 size={16} />

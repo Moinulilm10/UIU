@@ -204,10 +204,10 @@ export default function Assignments() {
                         <Target size={24} />
                       </div>
                       <div className="flex gap-1">
-                        <button onClick={() => handleOpenModal(asgn)} className="p-2 rounded-xl hover:bg-surface-alt text-text-muted hover:text-primary transition-colors">
+                        <button onClick={() => handleOpenModal(asgn)} className="p-2 rounded-xl hover:bg-surface-alt text-text-muted hover:text-primary transition-colors cursor-pointer">
                           <Edit2 size={16} />
                         </button>
-                        <button onClick={() => setDeleteConfirm({ show: true, id: asgn.id, title: asgn.title })} className="p-2 rounded-xl hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors">
+                        <button onClick={() => setDeleteConfirm({ show: true, id: asgn.id, title: asgn.title })} className="p-2 rounded-xl hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors cursor-pointer">
                           <Trash2 size={16} />
                         </button>
                       </div>

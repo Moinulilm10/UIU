@@ -188,11 +188,11 @@ export default function BatchManagement() {
                   </div>
 
                   <div className="flex items-center gap-3 pt-6 border-t border-border/50">
-                    <Button variant="secondary" size="sm" className="flex-1 rounded-xl" onClick={() => setViewingStudentsInBatch(batch)}>
+                    <Button variant="secondary" size="sm" className="flex-1 rounded-xl cursor-pointer" onClick={() => setViewingStudentsInBatch(batch)}>
                       <Eye size={16} /> View Students
                     </Button>
-                    <Button variant="ghost" size="sm" className="rounded-xl" onClick={() => openEdit(batch)}><Edit3 size={16} /></Button>
-                    <Button variant="danger" size="sm" className="rounded-xl" onClick={() => setDeleteConfirm(batch)}><Trash2 size={16} /></Button>
+                    <Button variant="ghost" size="sm" className="rounded-xl cursor-pointer" onClick={() => openEdit(batch)}><Edit3 size={16} /></Button>
+                    <Button variant="danger" size="sm" className="rounded-xl cursor-pointer" onClick={() => setDeleteConfirm(batch)}><Trash2 size={16} /></Button>
                   </div>
                 </Card>
               </motion.div>
@@ -233,9 +233,9 @@ export default function BatchManagement() {
                       <td className="px-6 py-5 hidden md:table-cell text-center"><Badge status={isFull ? "closed" : batch.status} /></td>
                       <td className="px-6 py-5 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="sm" className="p-2 rounded-xl" onClick={() => setViewingStudentsInBatch(batch)}><Eye size={18} /></Button>
-                          <Button variant="ghost" size="sm" className="p-2 rounded-xl" onClick={() => openEdit(batch)}><Edit3 size={18} /></Button>
-                          <Button variant="danger" size="sm" className="p-2 rounded-xl" onClick={() => setDeleteConfirm(batch)}><Trash2 size={18} /></Button>
+                          <Button variant="ghost" size="sm" className="p-2 rounded-xl cursor-pointer" onClick={() => setViewingStudentsInBatch(batch)}><Eye size={18} /></Button>
+                          <Button variant="ghost" size="sm" className="p-2 rounded-xl cursor-pointer" onClick={() => openEdit(batch)}><Edit3 size={18} /></Button>
+                          <Button variant="danger" size="sm" className="p-2 rounded-xl cursor-pointer" onClick={() => setDeleteConfirm(batch)}><Trash2 size={18} /></Button>
                         </div>
                       </td>
                     </tr>

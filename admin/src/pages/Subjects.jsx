@@ -570,7 +570,7 @@ function SortableTreeItem({ id, label, icon, active, expanded, onToggle, onClick
         
         <button 
           onClick={(e) => { e.stopPropagation(); onToggle?.(); }}
-          className={`p-1 rounded-md transition-transform ${expanded ? "rotate-90" : ""} ${onToggle ? "visible" : "invisible"}`}
+          className={`p-1 rounded-md transition-transform cursor-pointer ${expanded ? "rotate-90" : ""} ${onToggle ? "visible" : "invisible"}`}
         >
           <ChevronRight size={14} className="text-text-muted" />
         </button>
@@ -580,14 +580,14 @@ function SortableTreeItem({ id, label, icon, active, expanded, onToggle, onClick
 
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pr-1">
         {onAdd && (
-          <button onClick={(e) => { e.stopPropagation(); onAdd(); }} className="p-1.5 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors">
+          <button onClick={(e) => { e.stopPropagation(); onAdd(); }} className="p-1.5 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">
             <Plus size={14} />
           </button>
         )}
-        <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="p-1.5 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors">
+        <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="p-1.5 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">
           <Edit2 size={12} />
         </button>
-        <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1.5 rounded-lg hover:bg-red-500/10 hover:text-red-500 transition-colors text-red-500/50">
+        <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1.5 rounded-lg hover:bg-red-500/10 hover:text-red-500 transition-colors text-red-500/50 cursor-pointer">
           <Trash2 size={12} />
         </button>
       </div>

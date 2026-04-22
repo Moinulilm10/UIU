@@ -109,7 +109,7 @@ export default function Dashboard() {
               <h3 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight">Top Batches</h3>
               <button 
                 onClick={() => navigate("/batches")}
-                className="text-xs font-bold text-primary hover:underline underline-offset-4"
+                className="text-xs font-bold text-primary hover:underline underline-offset-4 cursor-pointer"
               >
                 View All
               </button>
@@ -143,7 +143,7 @@ export default function Dashboard() {
               <h3 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight">Course Distribution</h3>
               <button 
                 onClick={() => navigate("/courses")}
-                className="text-xs font-bold text-primary hover:underline underline-offset-4"
+                className="text-xs font-bold text-primary hover:underline underline-offset-4 cursor-pointer"
               >
                 Manage Courses
               </button>
@@ -152,7 +152,11 @@ export default function Dashboard() {
               {batches.slice(0, 5).map((batch) => {
                 const pct = Math.round((batch.studentCount / batch.maxLimit) * 100);
                 return (
-                  <div key={batch.id} className="flex items-center gap-4 p-3 rounded-2xl hover:bg-surface-alt/50 transition-all duration-300 group border border-transparent hover:border-border/50">
+                  <div 
+                    key={batch.id} 
+                    onClick={() => navigate("/courses")}
+                    className="flex items-center gap-4 p-3 rounded-2xl hover:bg-surface-alt/50 transition-all duration-300 group border border-transparent hover:border-border/50 cursor-pointer"
+                  >
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                       <BookOpen size={20} className="text-primary" />
                     </div>

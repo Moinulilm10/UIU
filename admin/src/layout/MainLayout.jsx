@@ -165,7 +165,7 @@ export default function MainLayout() {
               <p className="text-sm font-bold text-text-primary truncate leading-none mb-1">{user?.name || "Admin"}</p>
               <p className="text-[11px] text-text-muted truncate leading-none font-medium">{user?.email || "admin@edulearn.com"}</p>
             </div>
-            <LogOut size={14} className="text-text-muted group-hover:text-red-400 transition-colors" onClick={(e) => { e.stopPropagation(); logout(); }} />
+            <LogOut size={14} className="text-text-muted group-hover:text-red-400 transition-colors cursor-pointer" onClick={(e) => { e.stopPropagation(); logout(); }} />
           </div>
         </div>
       </aside>
@@ -237,7 +237,7 @@ export default function MainLayout() {
                       {unreadCount > 0 && (
                         <button 
                           onClick={markAllAsRead}
-                          className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-tighter"
+                          className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-tighter cursor-pointer"
                         >
                           Mark all as read
                         </button>
@@ -294,7 +294,7 @@ export default function MainLayout() {
                     </div>
 
                     <div className="px-5 py-3 border-t border-border bg-surface-alt/10 text-center">
-                      <button className="text-[11px] font-bold text-text-muted hover:text-primary transition-colors">
+                      <button className="text-[11px] font-bold text-text-muted hover:text-primary transition-colors cursor-pointer">
                         View All Activity
                       </button>
                     </div>

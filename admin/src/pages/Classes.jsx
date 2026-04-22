@@ -115,13 +115,13 @@ export default function Classes() {
           <div className="flex bg-surface p-1 rounded-xl border border-border/50">
             <button 
               onClick={() => setViewMode("grid")}
-              className={`p-2 rounded-lg transition-all ${viewMode === "grid" ? "bg-primary text-white shadow-lg" : "text-text-muted hover:text-text-primary"}`}
+              className={`p-2 rounded-lg transition-all cursor-pointer ${viewMode === "grid" ? "bg-primary text-white shadow-lg" : "text-text-muted hover:text-text-primary"}`}
             >
               <LayoutGrid size={18} />
             </button>
             <button 
               onClick={() => setViewMode("list")}
-              className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-primary text-white shadow-lg" : "text-text-muted hover:text-text-primary"}`}
+              className={`p-2 rounded-lg transition-all cursor-pointer ${viewMode === "list" ? "bg-primary text-white shadow-lg" : "text-text-muted hover:text-text-primary"}`}
             >
               <List size={18} />
             </button>
@@ -162,10 +162,10 @@ export default function Classes() {
                       <div className="flex items-start justify-between mb-4">
                         {getPlatformIcon(cls.platform)}
                         <div className="flex gap-1">
-                          <button onClick={() => handleOpenModal(cls)} className="p-2 rounded-xl hover:bg-surface-alt text-text-muted hover:text-primary transition-colors">
+                          <button onClick={() => handleOpenModal(cls)} className="p-2 rounded-xl hover:bg-surface-alt text-text-muted hover:text-primary transition-colors cursor-pointer">
                             <Edit2 size={16} />
                           </button>
-                          <button onClick={() => setDeleteConfirm({ show: true, id: cls.id, title: cls.title })} className="p-2 rounded-xl hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors">
+                          <button onClick={() => setDeleteConfirm({ show: true, id: cls.id, title: cls.title })} className="p-2 rounded-xl hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors cursor-pointer">
                             <Trash2 size={16} />
                           </button>
                         </div>
@@ -250,10 +250,10 @@ export default function Classes() {
                         Join <ExternalLink size={14} />
                       </a>
                       <div className="flex gap-1">
-                        <button onClick={() => handleOpenModal(cls)} className="p-2 rounded-xl hover:bg-surface-alt text-text-muted hover:text-primary transition-colors">
+                        <button onClick={() => handleOpenModal(cls)} className="p-2 rounded-xl hover:bg-surface-alt text-text-muted hover:text-primary transition-colors cursor-pointer">
                           <Edit2 size={16} />
                         </button>
-                        <button onClick={() => setDeleteConfirm({ show: true, id: cls.id, title: cls.title })} className="p-2 rounded-xl hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors">
+                        <button onClick={() => setDeleteConfirm({ show: true, id: cls.id, title: cls.title })} className="p-2 rounded-xl hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors cursor-pointer">
                           <Trash2 size={16} />
                         </button>
                       </div>

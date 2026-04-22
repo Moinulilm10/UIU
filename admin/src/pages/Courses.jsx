@@ -211,7 +211,7 @@ export default function Courses() {
                   <div className="flex items-center gap-4">
                     <button 
                         onClick={() => setViewingBatchesCourse(course)}
-                        className="flex items-center gap-1.5 hover:text-primary transition-colors group/stat" 
+                        className="flex items-center gap-1.5 hover:text-primary transition-colors group/stat cursor-pointer" 
                         title="View Batches"
                     >
                       <Layout size={14} className="text-text-muted group-hover/stat:text-primary transition-colors" />
@@ -219,7 +219,7 @@ export default function Courses() {
                     </button>
                     <button 
                         onClick={() => setViewingStudentsCourse(course)}
-                        className="flex items-center gap-1.5 hover:text-primary transition-colors group/stat" 
+                        className="flex items-center gap-1.5 hover:text-primary transition-colors group/stat cursor-pointer" 
                         title="View Students"
                     >
                       <Users size={14} className="text-text-muted group-hover/stat:text-primary transition-colors" />

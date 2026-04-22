@@ -55,7 +55,7 @@ export default function Select({
         onClick={() => setIsOpen(!isOpen)}
         className={`
           w-full flex items-center justify-between px-5 py-4 rounded-2xl
-          bg-background border transition-all duration-300 text-left
+          bg-background border transition-all duration-300 text-left cursor-pointer
           ${isOpen ? "border-primary ring-4 ring-primary/10 shadow-lg" : "border-border hover:border-primary/50"}
         `}
       >
@@ -104,7 +104,7 @@ export default function Select({
                     type="button"
                     onClick={() => handleSelect(option)}
                     className={`
-                      w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group
+                      w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group cursor-pointer
                       ${
                         option.value === value
                           ? "bg-primary text-white shadow-lg shadow-primary/20"
