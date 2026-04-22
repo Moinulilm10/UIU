@@ -10,6 +10,7 @@ import Resources from "./pages/Resources";
 import Courses from "./pages/Courses";
 import Teachers from "./pages/Teachers";
 import Subjects from "./pages/Subjects";
+import Assignments from "./pages/Assignments";
 
 /**
  * ProtectedRoute — redirects to /login if not authenticated.
@@ -77,6 +78,7 @@ export default function App() {
           <Route path="/courses" element={<Courses />} />
           <Route path="/teachers" element={<Teachers />} />
           <Route path="/subjects" element={<Subjects />} />
+          <Route path="/assignments" element={<Assignments />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 

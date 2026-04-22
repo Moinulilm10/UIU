@@ -151,3 +151,26 @@ export const subjects = [
     modules: []
   }
 ];
+
+export const assignments = [
+  {
+    id: "asgn-1",
+    title: "Intro to CSS Flexbox",
+    description: "Build a responsive layout using Flexbox principles.",
+    type: "topic",
+    targetId: 10001,
+    dueDate: "2024-05-15",
+    points: 100,
+    status: "active"
+  },
+  {
+    id: "asgn-2",
+    title: "React Hooks Masterclass",
+    description: "Implement a custom hook for state persistence.",
+    type: "module",
+    targetId: 101,
+    dueDate: "2024-05-20",
+    points: 150,
+    status: "draft"
+  }
+];
