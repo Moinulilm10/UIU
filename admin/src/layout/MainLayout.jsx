@@ -12,6 +12,7 @@ import { useTheme } from "../context/ThemeContext";
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/courses", label: "Courses", icon: BookOpen },
+  { to: "/teachers", label: "Teachers", icon: User },
   { to: "/batches", label: "Batch Management", icon: GraduationCap },
   { to: "/students", label: "Students", icon: Users },
   { to: "/resources", label: "Resources", icon: FileText },

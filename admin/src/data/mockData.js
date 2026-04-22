@@ -29,6 +29,45 @@ export const batches = [
   { id: 10, name: "Batch Kappa", courseId: 10, courseName: "Digital Marketing Pro", studentCount: 19, maxLimit: 25, status: "open" },
 ];
 
+export const resources = [
+  { id: 1, title: "React Basics PDF", type: "pdf", size: "2.4 MB", batchId: 1, uploadedAt: "2024-03-10" },
+  { id: 2, title: "Advanced Patterns Video", type: "video", size: "45 MB", batchId: 1, uploadedAt: "2024-03-12" },
+  { id: 3, title: "Database Schema Image", type: "image", size: "1.2 MB", batchId: 2, uploadedAt: "2024-03-15" },
+];
+
+export const teachers = [
+  { 
+    id: 1, 
+    name: "Dr. Sarah Johnson", 
+    email: "sarah.j@university.edu", 
+    phone: "+1 (555) 012-3456",
+    designation: "Senior Professor",
+    department: "Computer Science",
+    expertise: ["React", "Node.js", "System Design"],
+    joinedAt: "2023-01-15"
+  },
+  { 
+    id: 2, 
+    name: "Prof. Michael Chen", 
+    email: "m.chen@university.edu", 
+    phone: "+1 (555) 987-6543",
+    designation: "Associate Professor",
+    department: "Mathematics",
+    expertise: ["Data Science", "AI", "Python"],
+    joinedAt: "2023-05-20"
+  },
+  { 
+    id: 3, 
+    name: "Engr. Emily Davis", 
+    email: "emily.d@university.edu", 
+    phone: "+1 (555) 456-7890",
+    designation: "Lecturer",
+    department: "Software Engineering",
+    expertise: ["UI/UX", "Frontend Dev", "Figma"],
+    joinedAt: "2024-02-10"
+  }
+];
+
 export const students = [
   { id: 1, name: "Arif Rahman", email: "arif.rahman@email.com", batchId: 1, enrolledDate: "2025-01-15" },
   { id: 2, name: "Fatima Begum", email: "fatima.b@email.com", batchId: 1, enrolledDate: "2025-01-16" },
@@ -76,13 +115,4 @@ export const enrollmentTrends = [
   { month: "Oct", count: 95 },
   { month: "Nov", count: 120 },
   { month: "Dec", count: 105 },
-];
-
-export const resources = [
-  { id: 1, batchId: 1, name: "React Fundamentals Presentation", type: "pptx", size: "2.4 MB", date: "2025-01-20", url: "#" },
-  { id: 2, batchId: 1, name: "Component Lifecycle Diagram", type: "image", size: "1.1 MB", date: "2025-01-22", url: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=800&auto=format&fit=crop" },
-  { id: 3, batchId: 1, name: "Week 1 Lecture Video", type: "video", size: "245 MB", date: "2025-01-25", url: "#" },
-  { id: 4, batchId: 2, name: "Python Setup Guide", type: "pdf", size: "850 KB", date: "2025-02-05", url: "#" },
-  { id: 5, batchId: 2, name: "Data Science Cheatsheet", type: "pdf", size: "1.5 MB", date: "2025-02-10", url: "#" },
-  { id: 6, batchId: 3, name: "Figma UI Kit", type: "zip", size: "45 MB", date: "2025-02-15", url: "#" },
 ];
