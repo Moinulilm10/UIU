@@ -1,6 +1,8 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
+/* ──────────────────────────────────────────────
+   Dark Theme (default)
+   ────────────────────────────────────────────── */
 @theme {
   --color-primary: #E29B41;
   --color-background: #0c0e14;
@@ -12,7 +14,26 @@
   --color-text-muted: #5c6178;
 }
 
-* {
+/* ──────────────────────────────────────────────
+   Light Theme overrides via data-theme attribute
+   ────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --color-primary: #D08A30;
+  --color-background: #f5f6fa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef0f6;
+  --color-border: #dde0ea;
+  --color-text-primary: #1a1d2b;
+  --color-text-secondary: #4b5068;
+  --color-text-muted: #8a8fa8;
+}
+
+/* ──────────────────────────────────────────────
+   Base reset & typography
+   ────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -22,15 +43,20 @@ html {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-text-primary);
   min-height: 100vh;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Custom scrollbar */
+/* ──────────────────────────────────────────────
+   Custom scrollbar
+   ────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -49,8 +75,37 @@ body {
   background: var(--color-text-muted);
 }
 
-/* Selection */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+/* ──────────────────────────────────────────────
+   Selection
+   ────────────────────────────────────────────── */
 ::selection {
   background-color: #E29B4140;
-  color: #f0f0f5;
+  color: var(--color-text-primary);
+}
+
+:root[data-theme="light"] ::selection {
+  background-color: #D08A3040;
+}
+
+/* ──────────────────────────────────────────────
+   Light theme select dropdown fix
+   ────────────────────────────────────────────── */
+:root[data-theme="light"] select option {
+  background-color: #ffffff;
+  color: #1a1d2b;
+}
+
+/* ──────────────────────────────────────────────
+   Smooth theme transitions
+   ────────────────────────────────────────────── */
+.bg-surface,
+.bg-background,
+.bg-surface-alt,
+.border-border {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }

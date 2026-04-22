@@ -27,63 +27,43 @@ export default function Students() {
 
   const filteredStudents = useMemo(() => {
     let result = studentList;
-    if (selectedBatchId) {
-      result = result.filter((s) => s.batchId === selectedBatchId);
-    }
+    if (selectedBatchId) result = result.filter((s) => s.batchId === selectedBatchId);
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (s) => s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q)
-      );
+      result = result.filter((s) => s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q));
     }
     return result;
   }, [studentList, selectedBatchId, searchQuery]);
 
   const totalPages = Math.ceil(filteredStudents.length / PAGE_SIZE);
-  const paginatedStudents = filteredStudents.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
-  );
+  const paginatedStudents = filteredStudents.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const getBatchName = (batchId) => {
-    const batch = batchList.find((b) => b.id === batchId);
-    return batch ? batch.name : "Unknown";
-  };
-
-  const getAvailableBatches = (studentBatchId) => {
-    return batchList.filter(
-      (b) => b.id !== studentBatchId && b.studentCount < b.maxLimit
-    );
-  };
+  const getBatchName = (batchId) => batchList.find((b) => b.id === batchId)?.name || "Unknown";
+  const getAvailableBatches = (studentBatchId) => batchList.filter((b) => b.id !== studentBatchId && b.studentCount < b.maxLimit);
 
   const handleMigrate = () => {
     if (!migrateStudent || !targetBatchId) return;
     const tId = Number(targetBatchId);
     const targetBatch = batchList.find((b) => b.id === tId);
     if (!targetBatch || targetBatch.studentCount >= targetBatch.maxLimit) return;
-
-    setStudentList((prev) =>
-      prev.map((s) =>
-        s.id === migrateStudent.id ? { ...s, batchId: tId } : s
-      )
-    );
+    setStudentList((prev) => prev.map((s) => (s.id === migrateStudent.id ? { ...s, batchId: tId } : s)));
     setMigrateStudent(null);
     setTargetBatchId("");
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Student Management</h1>
-        <p className="text-sm text-text-muted mt-1">
+        <h1 className="text-xl sm:text-2xl font-bold text-text-primary">Student Management</h1>
+        <p className="text-xs sm:text-sm text-text-muted mt-1">
           {filteredStudents.length} student{filteredStudents.length !== 1 ? "s" : ""} found
         </p>
       </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface border border-border flex-1">
+        <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-surface border border-border flex-1">
           <Search size={15} className="text-text-muted shrink-0" />
           <input
             type="text" placeholder="Search by name or email..."
@@ -98,9 +78,7 @@ export default function Students() {
           className="px-4 py-2.5 rounded-xl bg-surface border border-border text-sm text-text-primary outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
         >
           <option value="">All Batches</option>
-          {batchList.map((b) => (
-            <option key={b.id} value={b.id}>{b.name}</option>
-          ))}
+          {batchList.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}
         </select>
       </div>
 
@@ -121,57 +99,50 @@ export default function Students() {
               {paginatedStudents.map((student, i) => (
                 <motion.tr
                   key={student.id}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.03 }}
-                  className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors group"
+                  className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors"
                 >
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
                         {student.name.split(" ").map((n) => n[0]).join("")}
                       </div>
-                      <span className="font-medium text-text-primary">{student.name}</span>
+                      <span className="text-sm font-medium text-text-primary truncate">{student.name}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-text-secondary hidden sm:table-cell">
                     <div className="flex items-center gap-1.5">
-                      <Mail size={12} className="text-text-muted" />
-                      {student.email}
+                      <Mail size={12} className="text-text-muted shrink-0" />
+                      <span className="truncate">{student.email}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="inline-flex px-2 py-0.5 rounded-md bg-surface-alt text-xs font-medium text-text-primary">
+                    <span className="inline-flex px-2 py-0.5 rounded-md bg-surface-alt text-xs font-medium text-text-primary whitespace-nowrap">
                       {getBatchName(student.batchId)}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-text-secondary hidden md:table-cell">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar size={12} className="text-text-muted" />
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                      <Calendar size={12} className="text-text-muted shrink-0" />
                       {new Date(student.enrolledDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Button
-                      variant="ghost" size="sm"
-                      onClick={() => { setMigrateStudent(student); setTargetBatchId(""); }}
-                    >
-                      <ArrowRightLeft size={14} /> Migrate
+                    <Button variant="ghost" size="sm" onClick={() => { setMigrateStudent(student); setTargetBatchId(""); }}>
+                      <ArrowRightLeft size={14} /> <span className="hidden sm:inline">Migrate</span>
                     </Button>
                   </td>
                 </motion.tr>
               ))}
               {paginatedStudents.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-text-muted">
-                    No students found.
-                  </td>
-                </tr>
+                <tr><td colSpan={5} className="px-4 py-12 text-center text-sm text-text-muted">No students found.</td></tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="px-4 pb-4">
+        <div className="px-4 pb-3">
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       </Card>
@@ -185,23 +156,17 @@ export default function Students() {
               <strong className="text-text-primary">{getBatchName(migrateStudent.batchId)}</strong> to:
             </p>
             <select
-              value={targetBatchId}
-              onChange={(e) => setTargetBatchId(e.target.value)}
+              value={targetBatchId} onChange={(e) => setTargetBatchId(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-sm text-text-primary outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
             >
               <option value="">Select target batch...</option>
               {getAvailableBatches(migrateStudent.batchId).map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name} ({b.studentCount}/{b.maxLimit} students)
-                </option>
+                <option key={b.id} value={b.id}>{b.name} ({b.studentCount}/{b.maxLimit})</option>
               ))}
             </select>
             {targetBatchId && (() => {
               const tb = batchList.find((b) => b.id === Number(targetBatchId));
-              if (tb && tb.studentCount >= tb.maxLimit) {
-                return <p className="text-xs text-red-400">⚠ This batch is at max capacity.</p>;
-              }
-              return null;
+              return tb && tb.studentCount >= tb.maxLimit ? <p className="text-xs text-red-400">⚠ This batch is at max capacity.</p> : null;
             })()}
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => setMigrateStudent(null)}>Cancel</Button>

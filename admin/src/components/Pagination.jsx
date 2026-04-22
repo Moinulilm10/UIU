@@ -1,26 +1,21 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
- * Functional pagination component.
- * @param {number} currentPage - Active page number (1-indexed)
- * @param {number} totalPages - Total number of pages
- * @param {Function} onPageChange - Callback when page changes
+ * Functional pagination component — responsive with proper spacing.
  */
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
   if (totalPages <= 1) return null;
 
   const pages = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pages.push(i);
-  }
+  for (let i = 1; i <= totalPages; i++) pages.push(i);
 
   return (
-    <div className="flex items-center justify-between pt-4">
-      <span className="text-sm text-text-muted">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4">
+      <span className="text-xs sm:text-sm text-text-muted order-2 sm:order-1">
         Page {currentPage} of {totalPages}
       </span>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 order-1 sm:order-2">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -35,10 +30,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
             key={page}
             onClick={() => onPageChange(page)}
             className={`w-8 h-8 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer
-              ${
-                page === currentPage
-                  ? "bg-primary text-white shadow-md shadow-primary/25"
-                  : "text-text-muted hover:bg-surface-alt hover:text-text-primary"
+              ${page === currentPage
+                ? "bg-primary text-white shadow-md shadow-primary/25"
+                : "text-text-muted hover:bg-surface-alt hover:text-text-primary"
               }`}
           >
             {page}
