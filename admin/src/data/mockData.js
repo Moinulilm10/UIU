@@ -64,3 +64,12 @@ export const enrollmentTrends = [
   { month: "Nov", count: 120 },
   { month: "Dec", count: 105 },
 ];
+
+export const resources = [
+  { id: 1, batchId: 1, name: "React Fundamentals Presentation", type: "pptx", size: "2.4 MB", date: "2025-01-20", url: "#" },
+  { id: 2, batchId: 1, name: "Component Lifecycle Diagram", type: "image", size: "1.1 MB", date: "2025-01-22", url: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=800&auto=format&fit=crop" },
+  { id: 3, batchId: 1, name: "Week 1 Lecture Video", type: "video", size: "245 MB", date: "2025-01-25", url: "#" },
+  { id: 4, batchId: 2, name: "Python Setup Guide", type: "pdf", size: "850 KB", date: "2025-02-05", url: "#" },
+  { id: 5, batchId: 2, name: "Data Science Cheatsheet", type: "pdf", size: "1.5 MB", date: "2025-02-10", url: "#" },
+  { id: 6, batchId: 3, name: "Figma UI Kit", type: "zip", size: "45 MB", date: "2025-02-15", url: "#" },
+];
