@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRightLeft, Search, Mail, Calendar, UserCheck } from "lucide-react";
+import { ArrowRightLeft, Search, Mail, Calendar, UserCheck, Plus, Edit2, Trash2, User } from "lucide-react";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Select from "../components/Select";
+import Input from "../components/Input";
 import Pagination from "../components/Pagination";
 import { batches as initialBatches, students as initialStudents } from "../data/mockData";
 
@@ -23,8 +24,21 @@ export default function Students() {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // CRUD States
+  const [showStudentModal, setShowStudentModal] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [studentFormData, setStudentFormData] = useState({
+    name: "",
+    email: "",
+    batchId: "",
+    enrolledDate: new Date().toISOString().split('T')[0]
+  });
+  const [formErrors, setFormErrors] = useState({});
+
   const [migrateStudent, setMigrateStudent] = useState(null);
   const [targetBatchId, setTargetBatchId] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState({ show: false, student: null });
 
   const filteredStudents = useMemo(() => {
     let result = studentList;
@@ -52,14 +66,78 @@ export default function Students() {
     setTargetBatchId("");
   };
 
+  const handleOpenStudentModal = (student = null) => {
+    if (student) {
+      setEditingStudent(student);
+      setStudentFormData({
+        name: student.name,
+        email: student.email,
+        batchId: student.batchId,
+        enrolledDate: student.enrolledDate
+      });
+    } else {
+      setEditingStudent(null);
+      setStudentFormData({
+        name: "",
+        email: "",
+        batchId: selectedBatchId || "",
+        enrolledDate: new Date().toISOString().split('T')[0]
+      });
+    }
+    setFormErrors({});
+    setShowStudentModal(true);
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!studentFormData.name.trim()) errors.name = "Full name is required";
+    if (!studentFormData.email.trim()) errors.email = "Email is required";
+    else if (!/^\S+@\S+\.\S+$/.test(studentFormData.email)) errors.email = "Invalid email format";
+    if (!studentFormData.batchId) errors.batchId = "Please select a batch";
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSaveStudent = () => {
+    if (!validateForm()) return;
+
+    if (editingStudent) {
+      setStudentList(prev => prev.map(s => 
+        s.id === editingStudent.id ? { ...s, ...studentFormData, batchId: Number(studentFormData.batchId) } : s
+      ));
+    } else {
+      const newStudent = {
+        id: Date.now(),
+        ...studentFormData,
+        batchId: Number(studentFormData.batchId)
+      };
+      setStudentList(prev => [newStudent, ...prev]);
+    }
+    setShowStudentModal(false);
+  };
+
+  const handleDeleteStudent = () => {
+    setStudentList(prev => prev.filter(s => s.id !== deleteConfirm.student.id));
+    setDeleteConfirm({ show: false, student: null });
+  };
+
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">Student Directory</h1>
-        <p className="text-sm text-text-muted font-medium opacity-80">
-          Viewing {filteredStudents.length} enrolled student{filteredStudents.length !== 1 ? "s" : ""} across all batches
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">Student Directory</h1>
+          <p className="text-sm text-text-muted font-medium opacity-80">
+            Viewing {filteredStudents.length} enrolled student{filteredStudents.length !== 1 ? "s" : ""} across all batches
+          </p>
+        </div>
+        <Button 
+          onClick={() => handleOpenStudentModal()}
+          className="shadow-lg shadow-primary/20 rounded-2xl py-3 px-6"
+        >
+          <Plus size={20} className="mr-2" />
+          <span>Onboard New Student</span>
+        </Button>
       </div>
 
       {/* Filters Toolbar */}
@@ -133,9 +211,35 @@ export default function Students() {
                         </div>
                     </td>
                     <td className="px-6 py-5 text-right">
-                        <Button variant="ghost" size="sm" className="px-4 py-2 rounded-xl cursor-pointer" onClick={() => { setMigrateStudent(student); setTargetBatchId(""); }}>
-                        <ArrowRightLeft size={16} /> <span className="hidden sm:inline ml-1 font-bold">Migrate</span>
-                        </Button>
+                        <div className="flex items-center justify-end gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                            <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="p-2 rounded-xl cursor-pointer text-text-muted hover:text-primary" 
+                                onClick={() => handleOpenStudentModal(student)}
+                                title="Edit Student"
+                            >
+                                <Edit2 size={16} />
+                            </Button>
+                            <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="p-2 rounded-xl cursor-pointer text-text-muted hover:text-primary" 
+                                onClick={() => { setMigrateStudent(student); setTargetBatchId(""); }}
+                                title="Migrate Batch"
+                            >
+                                <ArrowRightLeft size={16} />
+                            </Button>
+                            <Button 
+                                variant="danger" 
+                                size="sm" 
+                                className="p-2 rounded-xl cursor-pointer" 
+                                onClick={() => setDeleteConfirm({ show: true, student })}
+                                title="Remove Student"
+                            >
+                                <Trash2 size={16} />
+                            </Button>
+                        </div>
                     </td>
                     </motion.tr>
                 ))}
@@ -155,6 +259,91 @@ export default function Students() {
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       </Card>
+
+      {/* Add/Edit Student Modal */}
+      <Modal 
+        isOpen={showStudentModal} 
+        onClose={() => setShowStudentModal(false)} 
+        title={editingStudent ? "Update Student Profile" : "Onboard New Student"}
+        className="max-w-2xl"
+      >
+        <div className="space-y-6">
+          <div className="flex flex-col items-center gap-4 mb-6">
+            <div className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-inner">
+                <User size={40} />
+            </div>
+            <p className="text-xs font-black text-text-muted uppercase tracking-widest">
+                {editingStudent ? "Editing Existing Record" : "Creating New Enrollment"}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input 
+                label="Full Name" 
+                placeholder="e.g. John Doe"
+                value={studentFormData.name}
+                onChange={(e) => setStudentFormData({...studentFormData, name: e.target.value})}
+                error={formErrors.name}
+            />
+            <Input 
+                label="Email Address" 
+                placeholder="john.doe@example.com"
+                type="email"
+                value={studentFormData.email}
+                onChange={(e) => setStudentFormData({...studentFormData, email: e.target.value})}
+                error={formErrors.email}
+            />
+            <Select 
+                label="Assign to Batch"
+                value={studentFormData.batchId}
+                onChange={(val) => setStudentFormData({...studentFormData, batchId: val})}
+                options={batchList.map(b => ({ 
+                    value: b.id, 
+                    label: b.name, 
+                    sublabel: `${b.courseName} (${b.studentCount}/${b.maxLimit})` 
+                }))}
+                error={formErrors.batchId}
+            />
+            <Input 
+                label="Enrollment Date" 
+                type="date"
+                value={studentFormData.enrolledDate}
+                onChange={(e) => setStudentFormData({...studentFormData, enrolledDate: e.target.value})}
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-6 border-t border-border/50">
+            <Button variant="ghost" className="rounded-xl px-6" onClick={() => setShowStudentModal(false)}>Cancel</Button>
+            <Button className="rounded-xl px-10 shadow-lg shadow-primary/20" onClick={handleSaveStudent}>
+                {editingStudent ? "Save Changes" : "Complete Onboarding"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal 
+        isOpen={deleteConfirm.show} 
+        onClose={() => setDeleteConfirm({ show: false, student: null })} 
+        title="Remove Student"
+        className="max-w-md"
+      >
+        <div className="space-y-6">
+            <div className="p-6 rounded-3xl bg-red-500/10 border border-red-500/20 text-center">
+                <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 mx-auto mb-4 shadow-inner">
+                    <Trash2 size={32} />
+                </div>
+                <h4 className="text-lg font-bold text-text-primary">Confirm Removal</h4>
+                <p className="text-sm text-text-muted mt-2 font-medium leading-relaxed">
+                    Are you sure you want to remove <strong className="text-red-500">{deleteConfirm.student?.name}</strong> from the student directory? This action cannot be undone.
+                </p>
+            </div>
+            <div className="flex justify-end gap-3">
+                <Button variant="ghost" className="rounded-xl px-6" onClick={() => setDeleteConfirm({ show: false, student: null })}>Cancel</Button>
+                <Button variant="danger" className="rounded-xl px-8 !bg-red-500 !text-white shadow-lg shadow-red-500/20" onClick={handleDeleteStudent}>Confirm Removal</Button>
+            </div>
+        </div>
+      </Modal>
 
       {/* Migrate Modal */}
       <Modal isOpen={!!migrateStudent} onClose={() => setMigrateStudent(null)} title="Student Migration">
