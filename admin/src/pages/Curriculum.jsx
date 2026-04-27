@@ -161,6 +161,10 @@ export default function Curriculum() {
       if (overContainerPath.length === 0) return newSubjects;
       if (activeContainerPath[0].id !== overContainerPath[0].id) return newSubjects;
 
+      // NEW RESTRICTION: Do not allow dragging items into a container of the same type
+      const overContainerType = overContainerPath[overContainerPath.length - 1].type;
+      if (activeItem.type === overContainerType) return newSubjects;
+
       // Safe to move across containers!
       const activeList = getListByPath(newSubjects, activeContainerPath);
       const overList = getListByPath(newSubjects, overContainerPath);
@@ -448,10 +452,18 @@ export default function Curriculum() {
                  id="item-type-select" 
                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-text-primary transition-all cursor-pointer shadow-sm appearance-none"
                >
-                 <option value="subject">Subject</option>
-                 <option value="module">Module</option>
-                 <option value="chapter">Chapter</option>
-                 <option value="topic">Topic</option>
+                 {(() => {
+                   const parentType = showItemModal.parentPath.length > 0 
+                     ? showItemModal.parentPath[showItemModal.parentPath.length - 1].type 
+                     : null;
+                   return (
+                     <>
+                       {parentType !== 'module' && <option value="module">Module</option>}
+                       {parentType !== 'chapter' && <option value="chapter">Chapter</option>}
+                       {parentType !== 'topic' && <option value="topic">Topic</option>}
+                     </>
+                   )
+                 })()}
                </select>
                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-text-muted mt-[30px]">
                   <ChevronRight size={16} className="rotate-90" />
