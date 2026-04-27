@@ -31,6 +31,7 @@ import {
   Plus,
   Save,
   Trash2,
+  FolderInput,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -80,6 +81,11 @@ export default function Curriculum() {
     id: null,
     title: "",
     pathArr: [],
+  });
+  const [moveModal, setMoveModal] = useState({
+    show: false,
+    item: null,
+    currentPath: [],
   });
 
   const sensors = useSensors(
@@ -341,6 +347,59 @@ export default function Curriculum() {
     return target?.content || "";
   };
 
+  const handleMoveItem = (targetPathStr) => {
+    const targetPath = JSON.parse(targetPathStr);
+    setSubjects((prev) => {
+      const newSubjects = JSON.parse(JSON.stringify(prev));
+      const { item, currentPath } = moveModal;
+
+      // 1. Remove from current location
+      const parentPath = currentPath.slice(0, -1);
+      let currentList = getListByPath(newSubjects, parentPath);
+      const itemIdx = currentList.findIndex((i) => i.id === item.id);
+      if (itemIdx === -1) return newSubjects;
+      const [itemToMove] = currentList.splice(itemIdx, 1);
+
+      // 2. Add to new location
+      let targetList = getListByPath(newSubjects, targetPath);
+      targetList.push(itemToMove);
+
+      // Expand the new parent
+      if (targetPath.length > 0) {
+        setExpandedItems((e) => ({ ...e, [targetPath[targetPath.length - 1].id]: true }));
+      }
+
+      return newSubjects;
+    });
+    setMoveModal({ show: false, item: null, currentPath: [] });
+  };
+
+  const getValidDestinations = () => {
+    if (!moveModal.item) return [];
+    const destinations = [];
+    destinations.push({ id: "root", title: "Top Level (Root)", pathStr: "[]" });
+
+    const traverse = (items, currentPath, depth) => {
+      items.forEach((item) => {
+        // Skip the item being moved and all its descendants
+        if (item.id === moveModal.item.id) return;
+
+        const newPath = [...currentPath, { id: item.id }];
+        destinations.push({
+          id: item.id,
+          title: `${"\u00A0".repeat(depth * 4)}↳ ${item.title} (${item.type})`,
+          pathStr: JSON.stringify(newPath),
+        });
+
+        if (item.children && item.children.length > 0) {
+          traverse(item.children, newPath, depth + 1);
+        }
+      });
+    };
+    traverse(subjects, [], 0);
+    return destinations;
+  };
+
   // ----- Recursive Tree Renderer -----
   const renderTree = (items, parentPath, parentItem = null) => {
     const parentId =
@@ -426,6 +485,7 @@ export default function Curriculum() {
                   onEditContent={() =>
                     setEditingContent({ item, pathArr: currentPath })
                   }
+                  onMove={() => setMoveModal({ show: true, item, currentPath })}
                   isTopLevel={parentPath.length === 0}
                 >
                   {renderTree(item.children, currentPath, item)}
@@ -752,6 +812,60 @@ export default function Curriculum() {
           </div>
         </div>
       </Modal>
+
+      {/* Move Item Modal */}
+      <Modal
+        isOpen={moveModal.show}
+        onClose={() =>
+          setMoveModal({ show: false, item: null, currentPath: [] })
+        }
+        title="Move Item"
+        className="max-w-md"
+      >
+        <div className="space-y-6">
+          <p className="text-sm text-text-muted font-medium">
+            Select a new location for <strong className="text-text-primary">{moveModal.item?.title}</strong>.
+          </p>
+          <div>
+            <label className="block text-sm font-semibold text-text-primary mb-2">
+              Destination
+            </label>
+            <div className="relative">
+              <select
+                id="move-destination-select"
+                className="w-full bg-surface border border-border rounded-xl px-4 py-3 outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-text-primary transition-all cursor-pointer shadow-sm appearance-none"
+              >
+                {getValidDestinations().map((dest) => (
+                  <option key={dest.id} value={dest.pathStr}>
+                    {dest.title}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-text-muted">
+                <ChevronRight size={16} className="rotate-90" />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button
+              variant="ghost"
+              onClick={() =>
+                setMoveModal({ show: false, item: null, currentPath: [] })
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                const select = document.getElementById("move-destination-select");
+                handleMoveItem(select.value);
+              }}
+            >
+              Move Here
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -766,6 +880,7 @@ function CurriculumNode({
   onEdit,
   onDelete,
   onEditContent,
+  onMove,
   children,
   isTopLevel,
 }) {
@@ -884,6 +999,13 @@ function CurriculumNode({
             </Button>
           )}
           <div className="w-px h-6 bg-border/60 mx-1 hidden sm:block" />
+          <button
+            onClick={onMove}
+            className="p-2 sm:p-2.5 text-text-muted hover:text-blue-500 rounded-xl hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 transition-all cursor-pointer shadow-sm"
+            title="Move to another container"
+          >
+            <FolderInput size={16} />
+          </button>
           <button
             onClick={onEdit}
             className="p-2 sm:p-2.5 text-text-muted hover:text-primary rounded-xl hover:bg-surface-alt border border-transparent hover:border-border transition-all cursor-pointer shadow-sm"
