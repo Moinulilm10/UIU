@@ -1,12 +1,29 @@
-import { useState, useRef, useEffect } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  LayoutDashboard, GraduationCap, Users, Settings,
-  Menu, X, ChevronRight, Bell, Search, LogOut,
-  Sun, Moon, User, ChevronDown, FileText, BookOpen, Book,
-  ClipboardList, Video, Clock
+  Bell,
+  Book,
+  BookOpen,
+  ChevronDown,
+  ClipboardList,
+  Clock,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Moon,
+  Search,
+  Settings,
+  Sun,
+  User,
+  Users,
+  Video,
+  X,
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import logoBlack from "../assets/logos/uiu-logo-black.png";
+import logoWhite from "../assets/logos/uiu_logo_white.png";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 
@@ -52,7 +69,10 @@ export default function MainLayout() {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOpen(false);
       }
-      if (notificationsRef.current && !notificationsRef.current.contains(e.target)) {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(e.target)
+      ) {
         setNotificationsOpen(false);
       }
     };
@@ -60,14 +80,16 @@ export default function MainLayout() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const unreadCount = notificationsList.filter(n => !n.read).length;
+  const unreadCount = notificationsList.filter((n) => !n.read).length;
 
   const markAsRead = (id) => {
-    setNotificationsList(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    setNotificationsList((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
+    );
   };
 
   const markAllAsRead = () => {
-    setNotificationsList(prev => prev.map(n => ({ ...n, read: true })));
+    setNotificationsList((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   // Close profile dropdown on route change
@@ -79,7 +101,9 @@ export default function MainLayout() {
     const path = location.pathname;
     if (path === "/") return "Dashboard";
     const segments = path.split("/").filter(Boolean);
-    return segments.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(" / ");
+    return segments
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join(" / ");
   };
 
   return (
@@ -107,13 +131,13 @@ export default function MainLayout() {
         `}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3.5 px-6 h-20 border-b border-border shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
-            <GraduationCap size={22} className="text-white" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-lg font-bold text-text-primary tracking-tight leading-none mb-1">EduAdmin</h1>
-            <p className="text-[11px] text-text-muted font-medium leading-none">Management Portal</p>
+        <div className="flex items-center px-6 h-20 border-b border-border shrink-0">
+          <div className="flex items-center justify-start w-full">
+            <img
+              src={isDark ? logoWhite : logoBlack}
+              alt="UIU Logo"
+              className="h-10 w-auto object-contain transition-all duration-300"
+            />
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -136,18 +160,30 @@ export default function MainLayout() {
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 `group flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300
-                 ${isActive
-                    ? "bg-primary/10 text-primary shadow-sm"
-                    : "text-text-secondary hover:bg-surface-alt hover:text-text-primary"
+                 ${
+                   isActive
+                     ? "bg-primary/10 text-primary shadow-sm"
+                     : "text-text-secondary hover:bg-surface-alt hover:text-text-primary"
                  }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <Icon size={19} strokeWidth={isActive ? 2.5 : 2} className={isActive ? "text-primary" : "text-text-muted group-hover:text-text-primary transition-colors"} />
+                  <Icon
+                    size={19}
+                    strokeWidth={isActive ? 2.5 : 2}
+                    className={
+                      isActive
+                        ? "text-primary"
+                        : "text-text-muted group-hover:text-text-primary transition-colors"
+                    }
+                  />
                   <span className="flex-1">{label}</span>
                   {isActive && (
-                    <motion.div layoutId="nav-active" className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    <motion.div
+                      layoutId="nav-active"
+                      className="w-1.5 h-1.5 rounded-full bg-primary"
+                    />
                   )}
                 </>
               )}
@@ -162,10 +198,21 @@ export default function MainLayout() {
               {user?.name?.[0] || "A"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-text-primary truncate leading-none mb-1">{user?.name || "Admin"}</p>
-              <p className="text-[11px] text-text-muted truncate leading-none font-medium">{user?.email || "admin@edulearn.com"}</p>
+              <p className="text-sm font-bold text-text-primary truncate leading-none mb-1">
+                {user?.name || "Admin"}
+              </p>
+              <p className="text-[11px] text-text-muted truncate leading-none font-medium">
+                {user?.email || "admin@edulearn.com"}
+              </p>
             </div>
-            <LogOut size={14} className="text-text-muted group-hover:text-red-400 transition-colors cursor-pointer" onClick={(e) => { e.stopPropagation(); logout(); }} />
+            <LogOut
+              size={14}
+              className="text-text-muted group-hover:text-red-400 transition-colors cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                logout();
+              }}
+            />
           </div>
         </div>
       </aside>
@@ -181,6 +228,15 @@ export default function MainLayout() {
           >
             <Menu size={22} />
           </button>
+
+          {/* Mobile Logo */}
+          <div className="lg:hidden flex items-center">
+            <img
+              src={isDark ? logoWhite : logoBlack}
+              alt="UIU Logo"
+              className="h-8 w-auto object-contain"
+            />
+          </div>
 
           {/* Breadcrumb */}
           <div className="flex-1 min-w-0">
@@ -214,7 +270,9 @@ export default function MainLayout() {
               <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                 className={`p-2.5 rounded-xl transition-all duration-300 cursor-pointer border border-border/50 relative ${
-                  notificationsOpen ? "bg-surface-alt text-primary border-primary/50 shadow-lg shadow-primary/5" : "text-text-muted hover:bg-surface-alt hover:text-text-primary"
+                  notificationsOpen
+                    ? "bg-surface-alt text-primary border-primary/50 shadow-lg shadow-primary/5"
+                    : "text-text-muted hover:bg-surface-alt hover:text-text-primary"
                 }`}
               >
                 <Bell size={20} />
@@ -233,9 +291,11 @@ export default function MainLayout() {
                     className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-surface rounded-2xl border border-border shadow-2xl shadow-black/20 overflow-hidden z-50 flex flex-col"
                   >
                     <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-surface-alt/20">
-                      <h3 className="text-sm font-extrabold text-text-primary uppercase tracking-widest">Notifications</h3>
+                      <h3 className="text-sm font-extrabold text-text-primary uppercase tracking-widest">
+                        Notifications
+                      </h3>
                       {unreadCount > 0 && (
-                        <button 
+                        <button
                           onClick={markAllAsRead}
                           className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-tighter cursor-pointer"
                         >
@@ -248,28 +308,42 @@ export default function MainLayout() {
                       {notificationsList.length > 0 ? (
                         <div className="divide-y divide-border">
                           {notificationsList.map((notif) => (
-                            <div 
+                            <div
                               key={notif.id}
                               onClick={() => markAsRead(notif.id)}
                               className={`px-5 py-4 flex gap-4 hover:bg-surface-alt transition-colors cursor-pointer group ${!notif.read ? "bg-primary/[0.02]" : ""}`}
                             >
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
-                                notif.type === 'enrollment' ? 'bg-emerald-500/10 text-emerald-500' :
-                                notif.type === 'assignment' ? 'bg-blue-500/10 text-blue-500' :
-                                notif.type === 'class' ? 'bg-orange-500/10 text-orange-500' :
-                                'bg-purple-500/10 text-purple-500'
-                              }`}>
-                                {notif.type === 'enrollment' ? <GraduationCap size={18} /> :
-                                 notif.type === 'assignment' ? <ClipboardList size={18} /> :
-                                 notif.type === 'class' ? <Video size={18} /> :
-                                 <User size={18} />}
+                              <div
+                                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
+                                  notif.type === "enrollment"
+                                    ? "bg-emerald-500/10 text-emerald-500"
+                                    : notif.type === "assignment"
+                                      ? "bg-blue-500/10 text-blue-500"
+                                      : notif.type === "class"
+                                        ? "bg-orange-500/10 text-orange-500"
+                                        : "bg-purple-500/10 text-purple-500"
+                                }`}
+                              >
+                                {notif.type === "enrollment" ? (
+                                  <GraduationCap size={18} />
+                                ) : notif.type === "assignment" ? (
+                                  <ClipboardList size={18} />
+                                ) : notif.type === "class" ? (
+                                  <Video size={18} />
+                                ) : (
+                                  <User size={18} />
+                                )}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between mb-0.5">
-                                  <p className={`text-xs font-bold truncate ${!notif.read ? "text-text-primary" : "text-text-muted"}`}>
+                                  <p
+                                    className={`text-xs font-bold truncate ${!notif.read ? "text-text-primary" : "text-text-muted"}`}
+                                  >
                                     {notif.title}
                                   </p>
-                                  {!notif.read && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                                  {!notif.read && (
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                  )}
                                 </div>
                                 <p className="text-[11px] text-text-muted font-medium line-clamp-2 leading-relaxed mb-1.5">
                                   {notif.message}
@@ -287,8 +361,12 @@ export default function MainLayout() {
                           <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center text-text-muted mx-auto mb-4 border border-border/50">
                             <Bell size={24} />
                           </div>
-                          <p className="text-sm font-bold text-text-primary">No notifications yet</p>
-                          <p className="text-xs text-text-muted mt-1 font-medium">When you have alerts, they will appear here.</p>
+                          <p className="text-sm font-bold text-text-primary">
+                            No notifications yet
+                          </p>
+                          <p className="text-xs text-text-muted mt-1 font-medium">
+                            When you have alerts, they will appear here.
+                          </p>
                         </div>
                       )}
                     </div>
@@ -313,8 +391,12 @@ export default function MainLayout() {
                   {user?.name?.[0] || "A"}
                 </div>
                 <div className="hidden sm:block text-left">
-                  <p className="text-xs font-bold text-text-primary leading-none mb-0.5">{user?.name?.split(' ')[0] || "Admin"}</p>
-                  <p className="text-[10px] text-text-muted font-medium leading-none">Super Admin</p>
+                  <p className="text-xs font-bold text-text-primary leading-none mb-0.5">
+                    {user?.name?.split(" ")[0] || "Admin"}
+                  </p>
+                  <p className="text-[10px] text-text-muted font-medium leading-none">
+                    Super Admin
+                  </p>
                 </div>
                 <ChevronDown
                   size={14}
@@ -334,8 +416,12 @@ export default function MainLayout() {
                   >
                     {/* User info */}
                     <div className="px-5 py-4 border-b border-border bg-surface-alt/30">
-                      <p className="text-sm font-bold text-text-primary truncate">{user?.name || "Admin User"}</p>
-                      <p className="text-[11px] text-text-muted truncate mt-0.5 font-medium">{user?.email || "admin@edulearn.com"}</p>
+                      <p className="text-sm font-bold text-text-primary truncate">
+                        {user?.name || "Admin User"}
+                      </p>
+                      <p className="text-[11px] text-text-muted truncate mt-0.5 font-medium">
+                        {user?.email || "admin@edulearn.com"}
+                      </p>
                     </div>
 
                     {/* Menu items */}
