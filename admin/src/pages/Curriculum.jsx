@@ -13,7 +13,8 @@ import {
   useSensor,
   useSensors,
   DragOverlay,
-  defaultDropAnimationSideEffects
+  defaultDropAnimationSideEffects,
+  useDroppable
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -289,12 +290,7 @@ export default function Curriculum() {
     if (!items || items.length === 0) {
        return (
          <SortableContext items={[]} id={parentId} strategy={verticalListSortingStrategy}>
-           <div className="p-4 sm:p-6 text-center border-2 border-dashed border-border/60 rounded-2xl bg-surface/30 m-2 sm:m-4 shadow-sm min-h-[100px] flex flex-col justify-center items-center">
-             <p className="text-sm text-text-primary font-bold mb-3">No content added yet</p>
-             <Button size="sm" variant="ghost" onClick={() => setShowItemModal({ show: true, mode: 'add', parentPath, itemToEdit: null })} className="border border-border/50 bg-surface shadow-sm hover:border-primary/50">
-               <Plus size={16} className="mr-2"/> Add Content
-             </Button>
-           </div>
+           <EmptyDropZone id={parentId} onAdd={() => setShowItemModal({ show: true, mode: 'add', parentPath, itemToEdit: null })} />
          </SortableContext>
        );
     }
@@ -534,13 +530,13 @@ function CurriculumNode({
             <GripVertical size={18} />
           </button>
           
-          {hasChildren ? (
-            <button onClick={onToggle} className={`p-1.5 sm:p-2 text-text-muted hover:text-primary hover:bg-surface-alt rounded-xl transition-all ${expanded ? 'rotate-90 bg-primary/10 text-primary' : ''} shrink-0 cursor-pointer`} title={expanded ? "Collapse" : "Expand"}>
-              <ChevronRight size={18} />
-            </button>
-          ) : (
-             <div className="w-8 sm:w-10" /> // spacer for alignment
-          )}
+          <button 
+            onClick={onToggle} 
+            className={`p-1.5 sm:p-2 text-text-muted hover:text-primary hover:bg-surface-alt rounded-xl transition-all ${expanded ? 'rotate-90 bg-primary/10 text-primary' : ''} shrink-0 cursor-pointer ${!hasChildren ? 'opacity-40 hover:opacity-100' : ''}`} 
+            title={expanded ? "Collapse" : "Expand"}
+          >
+            <ChevronRight size={18} />
+          </button>
           
           <div className={`p-2.5 rounded-xl ${colorClass} shrink-0 shadow-inner hidden xs:flex`}>
             <Icon size={20} />
@@ -582,7 +578,7 @@ function CurriculumNode({
       </div>
       
       <AnimatePresence>
-        {expanded && hasChildren && (
+        {expanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -595,6 +591,22 @@ function CurriculumNode({
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+function EmptyDropZone({ id, onAdd }) {
+  const { setNodeRef, isOver } = useDroppable({ id });
+  
+  return (
+    <div 
+      ref={setNodeRef}
+      className={`p-4 sm:p-6 text-center border-2 border-dashed rounded-2xl m-2 sm:m-4 shadow-sm min-h-[100px] flex flex-col justify-center items-center transition-colors ${isOver ? 'border-primary bg-primary/10' : 'border-border/60 bg-surface/30'}`}
+    >
+       <p className="text-sm text-text-primary font-bold mb-3">{isOver ? 'Drop items here to nest them' : 'No content added yet'}</p>
+       <Button size="sm" variant="ghost" onClick={onAdd} className="border border-border/50 bg-surface shadow-sm hover:border-primary/50 pointer-events-auto">
+         <Plus size={16} className="mr-2"/> Add Content
+       </Button>
     </div>
   );
 }
