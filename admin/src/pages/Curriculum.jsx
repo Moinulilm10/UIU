@@ -12,6 +12,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
+  defaultDropAnimationSideEffects
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -89,23 +91,121 @@ export default function Curriculum() {
     return current.children;
   };
 
-  const handleDragEnd = (event, parentPath) => {
+  // Handle Drag Over (Cross-Container Dragging)
+  const handleDragOver = (event) => {
+    const { active, over } = event;
+    if (!over) return;
+    
+    const activeId = active.id;
+    const overId = over.id;
+    
+    if (activeId === overId) return;
+
+    setSubjects(prev => {
+      const newSubjects = JSON.parse(JSON.stringify(prev));
+      
+      let activeContainerPath = null;
+      let overContainerPath = null;
+      let activeIndex = -1;
+      let overIndex = -1;
+      let activeItem = null;
+
+      const traverse = (items, path) => {
+         const aIdx = items.findIndex(i => i.id === activeId);
+         if (aIdx !== -1) {
+            activeContainerPath = path;
+            activeIndex = aIdx;
+            activeItem = items[aIdx];
+         }
+         const oIdx = items.findIndex(i => i.id === overId);
+         if (oIdx !== -1) {
+            overContainerPath = path;
+            overIndex = oIdx;
+         }
+         items.forEach(item => {
+            if (item.children) traverse(item.children, [...path, { id: item.id }]);
+         });
+      };
+      traverse(newSubjects, []);
+
+      if (!overContainerPath) {
+         // Maybe hovered over an empty container (SortableContext id)
+         const findContainerById = (items, path) => {
+            if (overId === 'root') return { path, items };
+            for (const item of items) {
+               if (item.id === overId) return { path: [...path, { id: item.id }], items: item.children };
+               if (item.children) {
+                  const res = findContainerById(item.children, [...path, { id: item.id }]);
+                  if (res) return res;
+               }
+            }
+            return null;
+         };
+         const emptyContainer = findContainerById(newSubjects, []);
+         if (emptyContainer) {
+            overContainerPath = emptyContainer.path;
+            overIndex = emptyContainer.items.length;
+         }
+      }
+
+      if (!activeContainerPath || !overContainerPath) return newSubjects;
+
+      const isSameContainer = JSON.stringify(activeContainerPath) === JSON.stringify(overContainerPath);
+      if (isSameContainer) return newSubjects; // Let handleDragEnd deal with it
+
+      // RESTRICTION: Do not allow dragging Root level items (Subjects) into children
+      if (activeContainerPath.length === 0) return newSubjects; 
+
+      // RESTRICTION: Do not allow dragging items OUT of their specific Subject (into root or another subject)
+      if (overContainerPath.length === 0) return newSubjects;
+      if (activeContainerPath[0].id !== overContainerPath[0].id) return newSubjects;
+
+      // Safe to move across containers!
+      const activeList = getListByPath(newSubjects, activeContainerPath);
+      const overList = getListByPath(newSubjects, overContainerPath);
+
+      activeList.splice(activeIndex, 1);
+      
+      const isBelowOverItem = over && active.rect.current.translated && active.rect.current.translated.top > over.rect.top + over.rect.height;
+      const modifier = isBelowOverItem ? 1 : 0;
+      
+      overList.splice(overIndex >= 0 ? overIndex + modifier : overList.length, 0, activeItem);
+      
+      return newSubjects;
+    });
+  };
+
+  // Handle Drag End (Finalizing Reorder)
+  const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
     setSubjects(prev => {
       const newSubjects = JSON.parse(JSON.stringify(prev));
-      const list = getListByPath(newSubjects, parentPath);
+      
+      let activeContainerPath = null;
+      const traverse = (items, path) => {
+         const aIdx = items.findIndex(i => i.id === active.id);
+         if (aIdx !== -1) { activeContainerPath = path; }
+         items.forEach(item => {
+            if (item.children) traverse(item.children, [...path, { id: item.id }]);
+         });
+      };
+      traverse(newSubjects, []);
+
+      if (!activeContainerPath) return newSubjects;
+
+      const list = getListByPath(newSubjects, activeContainerPath);
       const oldIndex = list.findIndex(i => i.id === active.id);
       const newIndex = list.findIndex(i => i.id === over.id);
       
       if (oldIndex !== -1 && newIndex !== -1) {
         const reordered = arrayMove(list, oldIndex, newIndex);
-        if (parentPath.length === 0) {
+        if (activeContainerPath.length === 0) {
            return reordered;
         } else {
            let current = { children: newSubjects };
-           for (const p of parentPath) {
+           for (const p of activeContainerPath) {
              current = current.children.find(i => i.id === p.id);
            }
            current.children = reordered;
@@ -183,51 +283,52 @@ export default function Curriculum() {
   };
 
   // ----- Recursive Tree Renderer -----
-
   const renderTree = (items, parentPath) => {
+    const parentId = parentPath.length > 0 ? parentPath[parentPath.length - 1].id : 'root';
+
     if (!items || items.length === 0) {
        return (
-         <div className="p-4 sm:p-6 text-center border-2 border-dashed border-border/60 rounded-2xl bg-surface/30 m-2 sm:m-4 shadow-sm">
-           <p className="text-sm text-text-primary font-bold mb-3">No content added yet</p>
-           <Button size="sm" variant="ghost" onClick={() => setShowItemModal({ show: true, mode: 'add', parentPath, itemToEdit: null })} className="border border-border/50 bg-surface shadow-sm hover:border-primary/50">
-             <Plus size={16} className="mr-2"/> Add Content
-           </Button>
-         </div>
+         <SortableContext items={[]} id={parentId} strategy={verticalListSortingStrategy}>
+           <div className="p-4 sm:p-6 text-center border-2 border-dashed border-border/60 rounded-2xl bg-surface/30 m-2 sm:m-4 shadow-sm min-h-[100px] flex flex-col justify-center items-center">
+             <p className="text-sm text-text-primary font-bold mb-3">No content added yet</p>
+             <Button size="sm" variant="ghost" onClick={() => setShowItemModal({ show: true, mode: 'add', parentPath, itemToEdit: null })} className="border border-border/50 bg-surface shadow-sm hover:border-primary/50">
+               <Plus size={16} className="mr-2"/> Add Content
+             </Button>
+           </div>
+         </SortableContext>
        );
     }
     
     return (
       <div className={parentPath.length > 0 ? "p-2 sm:p-4" : "space-y-6"}>
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, parentPath)} modifiers={[restrictToVerticalAxis]}>
-          <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-            <div className={parentPath.length === 0 ? "space-y-6" : "space-y-3"}>
-              {items.map(item => {
-                const currentPath = [...parentPath, { id: item.id, type: item.type, title: item.title }];
-                return (
-                  <CurriculumNode
-                    key={item.id} id={item.id} item={item} type={item.type} 
-                    expanded={expandedItems[item.id]} onToggle={() => toggleExpand(item.id)}
-                    onAdd={() => setShowItemModal({ show: true, mode: 'add', parentPath: currentPath, itemToEdit: null })}
-                    onEdit={() => setShowItemModal({ show: true, mode: 'edit', parentPath, itemToEdit: item })}
-                    onDelete={() => setDeleteConfirm({ show: true, id: item.id, title: item.title, pathArr: currentPath })}
-                    onEditContent={() => setEditingContent({ item, pathArr: currentPath })}
-                    isTopLevel={parentPath.length === 0}
-                  >
-                    {renderTree(item.children, currentPath)}
-                  </CurriculumNode>
-                )
-              })}
-              {parentPath.length > 0 && (
-                <button 
-                  className="w-full mt-2 py-3 border border-dashed border-border/80 text-text-muted hover:text-primary hover:border-primary/50 hover:bg-primary/5 rounded-xl transition-all font-semibold text-sm flex items-center justify-center cursor-pointer shadow-sm"
-                  onClick={() => setShowItemModal({ show: true, mode: 'add', parentPath, itemToEdit: null })}
+        <SortableContext items={items.map(i => i.id)} id={parentId} strategy={verticalListSortingStrategy}>
+          <div className={parentPath.length === 0 ? "space-y-6" : "space-y-3 min-h-[40px]"}>
+            {items.map(item => {
+              const currentPath = [...parentPath, { id: item.id, type: item.type, title: item.title }];
+              return (
+                <CurriculumNode
+                  key={item.id} id={item.id} item={item} type={item.type} 
+                  expanded={expandedItems[item.id]} onToggle={() => toggleExpand(item.id)}
+                  onAdd={() => setShowItemModal({ show: true, mode: 'add', parentPath: currentPath, itemToEdit: null })}
+                  onEdit={() => setShowItemModal({ show: true, mode: 'edit', parentPath, itemToEdit: item })}
+                  onDelete={() => setDeleteConfirm({ show: true, id: item.id, title: item.title, pathArr: currentPath })}
+                  onEditContent={() => setEditingContent({ item, pathArr: currentPath })}
+                  isTopLevel={parentPath.length === 0}
                 >
-                  <Plus size={16} className="mr-2"/> Add Item Inside
-                </button>
-              )}
-            </div>
-          </SortableContext>
-        </DndContext>
+                  {renderTree(item.children, currentPath)}
+                </CurriculumNode>
+              )
+            })}
+            {parentPath.length > 0 && (
+              <button 
+                className="w-full mt-2 py-3 border border-dashed border-border/80 text-text-muted hover:text-primary hover:border-primary/50 hover:bg-primary/5 rounded-xl transition-all font-semibold text-sm flex items-center justify-center cursor-pointer shadow-sm"
+                onClick={() => setShowItemModal({ show: true, mode: 'add', parentPath, itemToEdit: null })}
+              >
+                <Plus size={16} className="mr-2"/> Add Item Inside
+              </button>
+            )}
+          </div>
+        </SortableContext>
       </div>
     );
   };
@@ -255,22 +356,24 @@ export default function Curriculum() {
         </div>
       </div>
 
-      {/* Main Builder Area */}
+      {/* Main Builder Area with Single DndContext wrapping everything */}
       <div className="flex-1">
-         {subjects.length === 0 ? (
-           <div className="py-24 flex flex-col items-center justify-center text-center">
-             <div className="w-24 h-24 rounded-3xl bg-surface-alt flex items-center justify-center text-text-muted mb-6 border border-border/50 shadow-inner">
-               <GraduationCap size={48} />
+         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+           {subjects.length === 0 ? (
+             <div className="py-24 flex flex-col items-center justify-center text-center">
+               <div className="w-24 h-24 rounded-3xl bg-surface-alt flex items-center justify-center text-text-muted mb-6 border border-border/50 shadow-inner">
+                 <GraduationCap size={48} />
+               </div>
+               <h3 className="text-2xl font-bold text-text-primary">Curriculum is Empty</h3>
+               <p className="text-base text-text-muted mt-2 max-w-md font-medium leading-relaxed">Start building your flexible course structure by adding your first item.</p>
+               <Button onClick={() => setShowItemModal({ show: true, mode: 'add', parentPath: [], itemToEdit: null })} className="mt-8 shadow-xl shadow-primary/25">
+                 <Plus size={20} className="mr-2"/> Add First Item
+               </Button>
              </div>
-             <h3 className="text-2xl font-bold text-text-primary">Curriculum is Empty</h3>
-             <p className="text-base text-text-muted mt-2 max-w-md font-medium leading-relaxed">Start building your flexible course structure by adding your first item.</p>
-             <Button onClick={() => setShowItemModal({ show: true, mode: 'add', parentPath: [], itemToEdit: null })} className="mt-8 shadow-xl shadow-primary/25">
-               <Plus size={20} className="mr-2"/> Add First Item
-             </Button>
-           </div>
-         ) : (
-           renderTree(subjects, [])
-         )}
+           ) : (
+             renderTree(subjects, [])
+           )}
+         </DndContext>
       </div>
 
       {/* Content Editor Full Screen Modal */}
@@ -401,7 +504,13 @@ function CurriculumNode({
   children, isTopLevel 
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : 1 };
+  // Add z-index to style when dragging so it stays above other elements
+  const style = { 
+    transform: CSS.Transform.toString(transform), 
+    transition, 
+    zIndex: isDragging ? 50 : 1,
+    opacity: isDragging ? 0.8 : 1
+  };
 
   const getTypeConfig = (t) => {
     switch (t?.toLowerCase()) {
