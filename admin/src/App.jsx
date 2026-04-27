@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Resources from "./pages/Resources";
 import Courses from "./pages/Courses";
 import Teachers from "./pages/Teachers";
-import Subjects from "./pages/Subjects";
+import Curriculum from "./pages/Curriculum";
 import Assignments from "./pages/Assignments";
 import Classes from "./pages/Classes";
 
@@ -78,7 +78,7 @@ export default function App() {
           <Route path="/resources" element={<Resources />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/teachers" element={<Teachers />} />
-          <Route path="/subjects" element={<Subjects />} />
+          <Route path="/curriculum" element={<Curriculum />} />
           <Route path="/assignments" element={<Assignments />} />
           <Route path="/classes" element={<Classes />} />
           <Route path="/settings" element={<Settings />} />

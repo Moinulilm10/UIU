@@ -13,7 +13,7 @@ import { useTheme } from "../context/ThemeContext";
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/courses", label: "Courses", icon: BookOpen },
-  { to: "/subjects", label: "Subjects", icon: Book },
+  { to: "/curriculum", label: "Curriculum", icon: Book },
   { to: "/assignments", label: "Assignments", icon: ClipboardList },
   { to: "/classes", label: "Classes", icon: Video },
   { to: "/teachers", label: "Teachers", icon: User },
