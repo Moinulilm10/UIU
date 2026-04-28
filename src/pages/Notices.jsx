@@ -19,6 +19,15 @@ import {
   ChevronRight
 } from "lucide-react";
 import { batches } from "../data/mockData";
+import Select from "../components/Select";
+
+const SCOPE_OPTIONS = [
+  { value: "Global", label: "Global", sublabel: "Everyone on the platform", icon: Megaphone },
+  { value: "Specific Batch", label: "Specific Batch", sublabel: "Target a single academic group", icon: BookOpen },
+  { value: "Students", label: "Students", sublabel: "All registered students", icon: Users },
+  { value: "Teachers", label: "Teachers", sublabel: "All faculty members", icon: Users },
+  { value: "Administrators", label: "Administrators", sublabel: "Dashboard management team", icon: Layer3 },
+];
 
 /**
  * Notice Management Page
@@ -374,46 +383,37 @@ export default function Notices() {
                 {/* Targeting */}
                 <div className="space-y-4">
                   <label className="text-xs font-black text-text-muted uppercase tracking-widest px-1">Advanced Targeting</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-5 rounded-2xl border border-border bg-surface-alt/10 space-y-3">
-                      <div className="flex items-center gap-2 text-primary">
-                        <Layer3 size={16} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Target Scope</span>
-                      </div>
-                      <select 
-                        value={formData.targetScope}
-                        onChange={(e) => setFormData({ ...formData, targetScope: e.target.value, targetBatch: "" })}
-                        className="w-full bg-transparent text-sm font-bold outline-none cursor-pointer border-b border-border pb-1 focus:border-primary transition-colors"
-                      >
-                        <option value="Global">Global (Everywhere)</option>
-                        <option value="Specific Batch">Specific Batch</option>
-                        <option value="Students">Students Only</option>
-                        <option value="Teachers">Teachers Only</option>
-                      </select>
-                    </div>
+                  <div className="grid grid-cols-1 gap-6">
+                    <Select 
+                      label="Target Scope"
+                      placeholder="Choose who sees this notice..."
+                      value={formData.targetScope}
+                      onChange={(val) => setFormData({ ...formData, targetScope: val, targetBatch: "" })}
+                      options={SCOPE_OPTIONS}
+                      icon={Layer3}
+                    />
 
                     <AnimatePresence>
                       {formData.targetScope === "Specific Batch" && (
                         <motion.div 
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          className="p-5 rounded-2xl border border-primary/20 bg-primary/5 space-y-3"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
                         >
-                          <div className="flex items-center gap-2 text-primary">
-                            <BookOpen size={16} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Select Batch</span>
-                          </div>
-                          <select 
+                          <Select 
+                            isSearchable
+                            label="Select Academic Batch"
+                            placeholder="Find a batch..."
                             value={formData.targetBatch}
-                            onChange={(e) => setFormData({ ...formData, targetBatch: e.target.value })}
-                            className="w-full bg-transparent text-sm font-bold outline-none cursor-pointer border-b border-primary/20 pb-1"
-                          >
-                            <option value="">Choose a Batch...</option>
-                            {batches.map(batch => (
-                              <option key={batch.id} value={batch.name}>{batch.name} ({batch.courseName})</option>
-                            ))}
-                          </select>
+                            onChange={(val) => setFormData({ ...formData, targetBatch: val })}
+                            options={batches.map(b => ({
+                              value: b.name,
+                              label: b.name,
+                              sublabel: b.courseName,
+                              icon: BookOpen
+                            }))}
+                            icon={BookOpen}
+                          />
                         </motion.div>
                       )}
                     </AnimatePresence>
