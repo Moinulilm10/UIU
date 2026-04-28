@@ -13,6 +13,8 @@ import Curriculum from "./pages/Curriculum";
 import Assignments from "./pages/Assignments";
 import Classes from "./pages/Classes";
 import Notices from "./pages/Notices";
+import Profile from "./pages/Profile";
+
 
 /**
  * ProtectedRoute — redirects to /login if not authenticated.
@@ -84,6 +86,7 @@ export default function App() {
           <Route path="/classes" element={<Classes />} />
           <Route path="/notices" element={<Notices />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
         {/* Catch-all */}

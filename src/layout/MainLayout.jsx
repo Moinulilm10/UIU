@@ -22,7 +22,8 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
+
 import logoBlack from "../assets/logos/uiu-logo-black.png";
 import logoWhite from "../assets/logos/uiu_logo_white.png";
 import { useAuth } from "../context/AuthContext";
@@ -205,26 +206,27 @@ export default function MainLayout() {
 
         {/* Sidebar bottom user card */}
         <div className="px-4 py-6 border-t border-border shrink-0 bg-surface/50">
-          <div className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl bg-surface-alt/50 border border-border/50 group cursor-pointer hover:bg-surface-alt transition-all duration-300">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-md">
-              {user?.name?.[0] || "A"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-text-primary truncate leading-none mb-1">
-                {user?.name || "Admin"}
-              </p>
-              <p className="text-[11px] text-text-muted truncate leading-none font-medium">
-                {user?.email || "admin@edulearn.com"}
-              </p>
-            </div>
-            <LogOut
-              size={14}
-              className="text-text-muted group-hover:text-red-400 transition-colors cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                logout();
-              }}
-            />
+          <div className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl bg-surface-alt/50 border border-border/50 group transition-all duration-300">
+            <Link to="/profile" onClick={() => setSidebarOpen(false)} className="flex items-center gap-3.5 flex-1 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                {user?.name?.[0] || "A"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-text-primary truncate mb-1 group-hover:text-primary transition-colors">
+                  {user?.name || "Admin"}
+                </p>
+                <p className="text-[11px] text-text-muted truncate font-medium">
+                  {user?.email || "admin@edulearn.com"}
+                </p>
+              </div>
+            </Link>
+            <button
+              onClick={logout}
+              className="p-2 rounded-lg text-text-muted hover:bg-red-500/10 hover:text-red-500 transition-all cursor-pointer"
+              title="Sign Out"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
       </aside>
@@ -438,14 +440,22 @@ export default function MainLayout() {
 
                     {/* Menu items */}
                     <div className="p-2 space-y-1">
-                      <button className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-all duration-200 cursor-pointer">
+                      <Link
+                        to="/profile"
+                        onClick={() => setProfileOpen(false)}
+                        className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-all duration-200 cursor-pointer text-left"
+                      >
                         <User size={16} />
                         My Profile
-                      </button>
-                      <button className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-all duration-200 cursor-pointer">
+                      </Link>
+                      <Link
+                        to="/settings"
+                        onClick={() => setProfileOpen(false)}
+                        className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-all duration-200 cursor-pointer text-left"
+                      >
                         <Settings size={16} />
                         Account Settings
-                      </button>
+                      </Link>
                     </div>
 
                     {/* Logout */}
