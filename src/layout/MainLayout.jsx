@@ -10,6 +10,7 @@ import {
   GraduationCap,
   LayoutDashboard,
   LogOut,
+  Megaphone,
   Menu,
   Moon,
   Search,
@@ -37,6 +38,7 @@ const navItems = [
   { to: "/batches", label: "Batch Management", icon: GraduationCap },
   { to: "/students", label: "Students", icon: Users },
   { to: "/resources", label: "Resources", icon: FileText },
+  { to: "/notices", label: "Notices", icon: Megaphone, hasBadge: true },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -169,16 +171,26 @@ export default function MainLayout() {
             >
               {({ isActive }) => (
                 <>
-                  <Icon
-                    size={19}
-                    strokeWidth={isActive ? 2.5 : 2}
-                    className={
-                      isActive
-                        ? "text-primary"
-                        : "text-text-muted group-hover:text-text-primary transition-colors"
-                    }
-                  />
+                  <div className="relative">
+                    <Icon
+                      size={19}
+                      strokeWidth={isActive ? 2.5 : 2}
+                      className={
+                        isActive
+                          ? "text-primary"
+                          : "text-text-muted group-hover:text-text-primary transition-colors"
+                      }
+                    />
+                    {label === "Notices" && (
+                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full border-2 border-surface animate-pulse shadow-sm" />
+                    )}
+                  </div>
                   <span className="flex-1">{label}</span>
+                  {label === "Notices" && (
+                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-black tracking-tighter">
+                      3
+                    </span>
+                  )}
                   {isActive && (
                     <motion.div
                       layoutId="nav-active"
