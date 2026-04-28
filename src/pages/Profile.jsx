@@ -2,20 +2,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Award,
   BookOpen,
+  Briefcase,
   Calendar,
   Camera,
   Check,
   Edit3,
-  GraduationCap,
   Image as ImageIcon,
   Mail,
   MapPin,
   Phone,
+  Shield,
   User,
   X,
-  Shield,
-  Briefcase,
-  Globe
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
@@ -51,7 +49,7 @@ export default function Profile() {
     address: "UIU Campus, Badda, Dhaka",
     department: "Administration",
     designation: "Super Admin",
-    bio: "Passionate about educational excellence and platform management."
+    bio: "Passionate about educational excellence and platform management.",
   });
 
   const handleImageUpload = (e, type) => {
@@ -249,7 +247,7 @@ export default function Profile() {
 
             <button
               onClick={() => profileInputRef.current?.click()}
-              className="absolute bottom-2 right-2 p-3.5 bg-primary text-white rounded-2xl shadow-xl shadow-primary/30 hover:scale-110 transition-transform cursor-pointer border-4 border-background group-hover/avatar:shadow-primary/50 z-30"
+              className="absolute bottom-3 right-4 p-2.5 bg-primary text-white rounded-2xl shadow-xl shadow-primary/30 hover:scale-110 transition-transform cursor-pointer border-4 border-background group-hover/avatar:shadow-primary/50 z-30"
             >
               <Camera size={20} />
             </button>
