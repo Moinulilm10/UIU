@@ -25,8 +25,8 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = (email, password) => {
-    const envEmail = import.meta.env.VITE_ADMIN_EMAIL;
-    const envPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+    const envEmail = import.meta.env.VITE_ADMIN_EMAIL || "admin@edulearn.com";
+    const envPassword = import.meta.env.VITE_ADMIN_PASSWORD || "Admin@123";
 
     if (email === envEmail && password === envPassword) {
       const userData = { email, name: "Admin User", role: "admin" };
