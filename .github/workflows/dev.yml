@@ -19,7 +19,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /var/www/uiu/demo/admin/deployed
+            cd /var/www/uiu/demo/admin
             bash auto_deploy.bash
   Notify:
     needs: Deploy-to-Dev
