@@ -1,0 +1,36 @@
+name: Staging Auto Deployment
+
+on:
+  push:
+    branches:
+      - "dev"
+
+jobs:
+  Deploy-to-Dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH into server and perform git operations
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /var/www/uiu/demo/admin/deployed
+            bash auto_deploy.bash
+  Notify:
+    needs: Deploy-to-Dev
+    if: always()
+    uses: ./.github/workflows/discord-notify.yml
+    with:
+      status: ${{ needs.Deploy-to-Dev.result }}
+      actor: ${{ github.actor }}
+      commit_message: ${{ toJSON(github.event.head_commit.message) }}
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{
+        github.run_id }}
+      branch: dev
+    secrets:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}

@@ -1,0 +1,108 @@
+name: PR Notification
+
+on:
+  pull_request:
+    branches:
+      - "main"
+      - "dev"
+    types: [opened, reopened, synchronize, closed]
+
+jobs:
+  Notify-Discord:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR
+        if: github.event.action != 'closed'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check Merge Conflicts
+        if: github.event.action != 'closed'
+        id: conflict_check
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          if git merge --no-commit --no-ff origin/${{ github.event.pull_request.base.ref }} 2>&1 | grep -q "CONFLICT"; then
+            echo "has_conflict=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_conflict=false" >> $GITHUB_OUTPUT
+          fi
+          git merge --abort 2>/dev/null || true
+
+      - name: Notify Discord - PR Opened/Updated
+        if: github.event.action != 'closed'
+        run: |
+          if [ "${{ steps.conflict_check.outputs.has_conflict }}" == "true" ]; then
+            CONFLICT_FIELD=",{\"name\": \"⚠️ Conflict\", \"value\": \"This PR has merge conflicts! Please resolve before merging.\", \"inline\": false}"
+            COLOR=15158332
+          else
+            CONFLICT_FIELD=""
+            COLOR=3447003
+          fi
+
+          if [ "${{ github.event.action }}" == "opened" ] || [ "${{ github.event.action }}" == "reopened" ]; then
+            TITLE="🔔 New Pull Request"
+          else
+            TITLE="🔄 Pull Request Updated"
+          fi
+
+          curl -H "Content-Type: application/json" \
+          -d "{
+            \"embeds\": [{
+              \"title\": \"$TITLE\",
+              \"description\": \"**${{ github.event.pull_request.title }}**\",
+              \"color\": $COLOR,
+              \"fields\": [
+                {\"name\": \"📦 Repository\", \"value\": \"${{ github.repository }}\", \"inline\": false},
+                {\"name\": \"👤 Author\", \"value\": \"${{ github.event.pull_request.user.login }}\", \"inline\": true},
+                {\"name\": \"📌 From Branch\", \"value\": \"${{ github.event.pull_request.head.ref }}\", \"inline\": true},
+                {\"name\": \"🎯 Into Branch\", \"value\": \"${{ github.event.pull_request.base.ref }}\", \"inline\": true},
+                {\"name\": \"🔗 PR Link\", \"value\": \"[Click here](${{ github.event.pull_request.html_url }})\", \"inline\": false}
+                $CONFLICT_FIELD
+              ]
+            }]
+          }" \
+          ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify Discord - PR Merged
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "✅ Pull Request Merged",
+              "description": "**${{ github.event.pull_request.title }}**",
+              "color": 3066993,
+              "fields": [
+                {"name": "📦 Repository", "value": "${{ github.repository }}", "inline": false},
+                {"name": "👤 Author", "value": "${{ github.event.pull_request.user.login }}", "inline": true},
+                {"name": "🔀 Merged by", "value": "${{ github.event.pull_request.merged_by.login }}", "inline": true},
+                {"name": "📌 From Branch", "value": "${{ github.event.pull_request.head.ref }}", "inline": true},
+                {"name": "🎯 Into Branch", "value": "${{ github.event.pull_request.base.ref }}", "inline": true},
+                {"name": "🔗 PR Link", "value": "[Click here](${{ github.event.pull_request.html_url }})", "inline": false}
+              ]
+            }]
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify Discord - PR Closed Without Merge
+        if: github.event.action == 'closed' && github.event.pull_request.merged == false
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "🚫 Pull Request Closed",
+              "description": "**${{ github.event.pull_request.title }}**",
+              "color": 10038562,
+              "fields": [
+                {"name": "📦 Repository", "value": "${{ github.repository }}", "inline": false},
+                {"name": "👤 Author", "value": "${{ github.event.pull_request.user.login }}", "inline": true},
+                {"name": "📌 From Branch", "value": "${{ github.event.pull_request.head.ref }}", "inline": true},
+                {"name": "🎯 Into Branch", "value": "${{ github.event.pull_request.base.ref }}", "inline": true},
+                {"name": "🔗 PR Link", "value": "[Click here](${{ github.event.pull_request.html_url }})", "inline": false}
+              ]
+            }]
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK }}

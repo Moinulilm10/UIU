@@ -1,0 +1,89 @@
+name: No Plans to Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  no-plans-to-merge:
+    runs-on: ubuntu-latest
+
+    if: github.event.pull_request.merged == false
+
+    steps:
+      - name: Output Context
+        run: |
+          echo "PR Number: ${{ github.event.number }}"
+          echo "Action: ${{ github.event.action }}"
+          echo "Merged: ${{ github.event.pull_request.merged }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Base Ref: ${{ github.event.pull_request.base.ref }}"
+          echo "Head Ref: ${{ github.event.pull_request.head.ref }}"
+
+      - name: Check for merge conflicts and secrets
+        id: review
+        run: |
+          issues=""
+          # Check for merge conflict markers
+          if grep -r '<<<<<<<' .; then
+            issues+="Merge conflict markers found.\n"
+          fi
+          # Check for common secret key patterns
+          if grep -r -E 'AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z-_]{35}|ghp_[0-9A-Za-z]{36,}' .; then
+            issues+="Potential secret keys found.\n"
+          fi
+          echo "issues=$issues" >> $GITHUB_OUTPUT
+
+      - name: Create a comment on the PR if issues found
+        if: steps.review.outputs.issues != ''
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issues = process.env.issues || '';
+            if (issues) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `Automated code review found issues on PR close:\n\n${issues}`
+              })
+            }
+
+      - name: Create a comment on the PR
+        uses: actions/github-script@v8
+        with:
+          script: |
+            try {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: 'No plans to merge'
+              })
+            } catch (error) {
+              core.warning('Could not create comment: ' + error.message)
+            }
+
+  pr-merged:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Comment on merged PR
+        uses: actions/github-script@v8
+        with:
+          script: |
+            try {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: 'This PR has been merged. Thank you for your contribution!'
+              })
+            } catch (error) {
+              core.warning('Could not create comment: ' + error.message)
+            }
