@@ -28,6 +28,7 @@ import logoBlack from "../assets/logos/uiu-logo-black.png";
 import logoWhite from "../assets/logos/uiu_logo_white.png";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { notifications } from "../data/mockData";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -61,9 +62,7 @@ export default function MainLayout() {
 
   // Load notifications from mock data
   useEffect(() => {
-    import("../data/mockData").then((data) => {
-      setNotificationsList(data.notifications || []);
-    });
+    setNotificationsList(notifications || []);
   }, []);
 
   // Close dropdowns on outside click
